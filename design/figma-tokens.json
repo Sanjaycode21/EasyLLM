@@ -1,128 +1,60 @@
 {
   "version": "1.0.0",
-  "name": "EasyLLM Design System",
-  "description": "Figma Design Tokens and Component Schema for EasyLLM Autonomous AI Architect",
+  "name": "EasyLLM Production Design Tokens",
+  "description": "Figma Design Tokens matching the live EasyLLM web UI (Next.js + Tailwind)",
   "color": {
     "background": {
-      "canvas": { "value": "#030712", "type": "color", "description": "Primary Dark Void Canvas" },
-      "surface": { "value": "#0b1120", "type": "color", "description": "Card Surface Background" },
-      "surfaceSubtle": { "value": "#0f172a", "type": "color", "description": "Secondary Surface" },
-      "input": { "value": "#030712", "type": "color", "description": "Input Box Background" },
-      "elevated": { "value": "#1e293b", "type": "color", "description": "Elevated Tooltips & Overlays" }
+      "canvas": { "value": "#f8fafc", "type": "color", "description": "Slate 50 Canvas" },
+      "surface": { "value": "#ffffff", "type": "color", "description": "White Card Surface" },
+      "surfaceMuted": { "value": "#f8fafc", "type": "color", "description": "Slate 50 Section Header" },
+      "surfaceSubtle": { "value": "#f1f5f9", "type": "color", "description": "Slate 100 Divider" }
     },
     "brand": {
-      "indigo": { "value": "#6366f1", "type": "color" },
-      "indigoDark": { "value": "#4f46e5", "type": "color" },
-      "cyan": { "value": "#06b6d4", "type": "color" },
-      "cyanLight": { "value": "#38bdf8", "type": "color" },
-      "emerald": { "value": "#10b981", "type": "color" },
-      "emeraldLight": { "value": "#34d399", "type": "color" },
-      "purple": { "value": "#a855f7", "type": "color" },
-      "rose": { "value": "#f43f5e", "type": "color" },
-      "amber": { "value": "#fbbf24", "type": "color" }
+      "primary": { "value": "#2563eb", "type": "color", "description": "Blue 600 Main Accent" },
+      "primaryDark": { "value": "#1d4ed8", "type": "color", "description": "Blue 700 Hover" },
+      "primaryLight": { "value": "#eff6ff", "type": "color", "description": "Blue 50 Badge Fill" },
+      "primaryBorder": { "value": "#bfdbfe", "type": "color", "description": "Blue 200 Badge Border" },
+      "emerald": { "value": "#059669", "type": "color", "description": "Emerald 600 Success / RAG fast" },
+      "emeraldLight": { "value": "#f0fdf4", "type": "color", "description": "Emerald 50 Fill" },
+      "purple": { "value": "#7e22ce", "type": "color", "description": "Purple 700 QLoRA Fine-Tune" },
+      "purpleLight": { "value": "#faf5ff", "type": "color", "description": "Purple 50 Fill" },
+      "amber": { "value": "#b45309", "type": "color", "description": "Amber 700 Hybrid" },
+      "amberLight": { "value": "#fffbeb", "type": "color", "description": "Amber 50 Fill" }
     },
     "border": {
-      "subtle": { "value": "#1e293b", "type": "color" },
-      "active": { "value": "#0284c7", "type": "color" },
-      "glow": { "value": "rgba(56, 189, 248, 0.4)", "type": "color" },
-      "success": { "value": "#10b981", "type": "color" }
+      "card": { "value": "#e2e8f0", "type": "color", "description": "Slate 200 Card Border" },
+      "input": { "value": "#cbd5e1", "type": "color", "description": "Slate 300 Input Border" },
+      "divider": { "value": "#f1f5f9", "type": "color", "description": "Slate 100 Internal Divider" }
     },
     "text": {
-      "primary": { "value": "#f8fafc", "type": "color" },
-      "secondary": { "value": "#94a3b8", "type": "color" },
-      "muted": { "value": "#64748b", "type": "color" },
-      "accent": { "value": "#38bdf8", "type": "color" },
-      "success": { "value": "#34d399", "type": "color" }
+      "primary": { "value": "#0f172a", "type": "color", "description": "Slate 900 Heading Text" },
+      "body": { "value": "#334155", "type": "color", "description": "Slate 700 Body Text" },
+      "muted": { "value": "#64748b", "type": "color", "description": "Slate 500 Description" },
+      "subtle": { "value": "#94a3b8", "type": "color", "description": "Slate 400 Captions & Timestamps" }
     }
   },
   "typography": {
     "fontFamilies": {
-      "sans": { "value": "Inter, system-ui, -apple-system, sans-serif", "type": "fontFamilies" },
+      "sans": { "value": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif", "type": "fontFamilies" },
       "mono": { "value": "SF Mono, JetBrains Mono, Fira Code, monospace", "type": "fontFamilies" }
     },
     "fontSizes": {
-      "xs": { "value": "12px", "type": "fontSizes" },
-      "sm": { "value": "14px", "type": "fontSizes" },
-      "base": { "value": "16px", "type": "fontSizes" },
-      "lg": { "value": "18px", "type": "fontSizes" },
-      "xl": { "value": "22px", "type": "fontSizes" },
-      "2xl": { "value": "28px", "type": "fontSizes" },
-      "3xl": { "value": "38px", "type": "fontSizes" }
-    },
-    "fontWeights": {
-      "regular": { "value": "400", "type": "fontWeights" },
-      "medium": { "value": "500", "type": "fontWeights" },
-      "semibold": { "value": "600", "type": "fontWeights" },
-      "bold": { "value": "700", "type": "fontWeights" },
-      "extrabold": { "value": "800", "type": "fontWeights" }
+      "hero": { "value": "52px", "type": "fontSizes" },
+      "heading": { "value": "18px", "type": "fontSizes" },
+      "subheading": { "value": "15px", "type": "fontSizes" },
+      "body": { "value": "13px", "type": "fontSizes" },
+      "caption": { "value": "11px", "type": "fontSizes" },
+      "badge": { "value": "10px", "type": "fontSizes" }
     }
   },
-  "radii": {
-    "sm": { "value": "6px", "type": "borderRadius" },
-    "md": { "value": "8px", "type": "borderRadius" },
-    "lg": { "value": "12px", "type": "borderRadius" },
-    "xl": { "value": "16px", "type": "borderRadius" },
-    "full": { "value": "9999px", "type": "borderRadius" }
-  },
-  "spacing": {
-    "xs": { "value": "4px", "type": "spacing" },
-    "sm": { "value": "8px", "type": "spacing" },
-    "md": { "value": "16px", "type": "spacing" },
-    "lg": { "value": "24px", "type": "spacing" },
-    "xl": { "value": "32px", "type": "spacing" },
-    "2xl": { "value": "48px", "type": "spacing" }
-  },
-  "shadows": {
-    "card": {
-      "value": {
-        "x": "0",
-        "y": "12px",
-        "blur": "24px",
-        "spread": "0",
-        "color": "rgba(0, 0, 0, 0.6)",
-        "type": "dropShadow"
-      }
-    },
-    "glowIndigo": {
-      "value": {
-        "x": "0",
-        "y": "0",
-        "blur": "32px",
-        "spread": "4px",
-        "color": "rgba(99, 102, 241, 0.25)",
-        "type": "dropShadow"
-      }
-    }
-  },
-  "components": {
-    "navbar": {
-      "height": "74px",
-      "borderRadius": "14px",
-      "background": "#0b1120",
-      "opacity": "0.85"
-    },
-    "decisionCard": {
-      "width": "510px",
-      "minHeight": "360px",
-      "borderRadius": "14px",
-      "borderWidth": "2px",
-      "activeBorder": "#0284c7"
-    },
-    "dropzone": {
-      "borderStyle": "dashed",
-      "borderWidth": "1.5px",
-      "borderColor": "#38bdf8",
-      "supportedFormats": ["DOCX", "PDF", "CSV", "JSONL", "TXT"]
-    },
-    "terminalConsole": {
-      "background": "#030712",
-      "font": "monospace",
-      "headerDots": ["#ef4444", "#fbbf24", "#10b981"]
-    },
-    "playgroundChat": {
-      "botBubbleBackground": "#0f1d36",
-      "botBubbleBorder": "#0284c7",
-      "userBubbleBackground": "#1e293b"
+  "layout": {
+    "maxWidth": "1152px",
+    "workbenchGrid": "7 cols (660px) + 5 cols (460px)",
+    "borderRadius": {
+      "card": "16px",
+      "innerBox": "10px",
+      "badge": "6px",
+      "button": "9999px"
     }
   }
 }
