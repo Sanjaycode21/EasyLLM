@@ -236,11 +236,16 @@ class OllamaProvider(LLMProvider):
             return await self._fallback.generate_structured(prompt, schema_cls)
 
 def get_llm_provider() -> LLMProvider:
-    if settings.openai_api_key:
+    provider = (settings.llm_provider or "").lower().strip()
+    if provider == "gemini" and settings.gemini_api_key:
+        return GeminiProvider(api_key=settings.gemini_api_key, model=settings.gemini_model)
+    elif provider == "openai" and settings.openai_api_key:
         return OpenAIProvider(api_key=settings.openai_api_key, model=settings.openai_model)
-    elif settings.gemini_api_key:
-        return GeminiProvider(api_key=settings.gemini_api_key)
-    elif settings.llm_provider == "ollama":
+    elif provider == "ollama":
         return OllamaProvider(base_url=settings.ollama_base_url)
+    elif settings.gemini_api_key:
+        return GeminiProvider(api_key=settings.gemini_api_key, model=settings.gemini_model)
+    elif settings.openai_api_key:
+        return OpenAIProvider(api_key=settings.openai_api_key, model=settings.openai_model)
     else:
         return RuleBasedLocalProvider()
