@@ -9,10 +9,11 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
-lib/
-lib64/
-parts/
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
 sdist/
 var/
 wheels/
