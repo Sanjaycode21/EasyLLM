@@ -1,0 +1,611 @@
+<svg width="1920" height="2680" viewBox="0 0 1920 2680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradients & Glows -->
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1920" y2="2680" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#030712" />
+      <stop offset="50%" stop-color="#090d16" />
+      <stop offset="100%" stop-color="#02040a" />
+    </linearGradient>
+
+    <radialGradient id="aurora-glow-1" cx="0.2" cy="0.1" r="0.6">
+      <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#4f46e5" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="aurora-glow-2" cx="0.8" cy="0.3" r="0.5">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="aurora-glow-3" cx="0.5" cy="0.7" r="0.6">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Card Backgrounds & Borders -->
+    <linearGradient id="card-border-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.4" />
+      <stop offset="50%" stop-color="#818cf8" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05" />
+    </linearGradient>
+
+    <linearGradient id="primary-btn-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+
+    <linearGradient id="green-btn-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+
+    <linearGradient id="brand-text-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+
+    <linearGradient id="rag-badge-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+
+    <!-- Drop Shadows -->
+    <filter id="shadow-card" x="-20" y="-20" width="120%" height="120%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+    <filter id="shadow-glow-indigo" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24" result="blur" />
+    </filter>
+  </defs>
+
+  <style>
+    .font-mono { font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; }
+    .font-sans { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .title-large { font-size: 38px; font-weight: 800; letter-spacing: -0.03em; }
+    .title-med { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+    .body-regular { font-size: 14px; font-weight: 400; line-height: 1.6; }
+    .body-bold { font-size: 14px; font-weight: 600; }
+    .caption { font-size: 12px; font-weight: 500; }
+  </style>
+
+  <!-- CANVAS BACKGROUND -->
+  <rect width="1920" height="2680" fill="url(#bg-grad)" />
+  <rect width="1920" height="2680" fill="url(#aurora-glow-1)" />
+  <rect width="1920" height="2680" fill="url(#aurora-glow-2)" />
+  <rect width="1920" height="2680" fill="url(#aurora-glow-3)" />
+
+  <!-- GRID OVERLAY (Figma Layout Grid Simulation) -->
+  <g opacity="0.05">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="1" />
+    </pattern>
+    <rect width="1920" height="2680" fill="url(#grid)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 1: FIGMA HEADER & META BANNER      -->
+  <!-- ========================================== -->
+  <g id="Figma-Header-Artboard-Meta" transform="translate(120, 60)">
+    <rect x="0" y="0" width="1680" height="90" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="url(#card-border-grad)" stroke-width="1" />
+    
+    <!-- Figma Project Tag -->
+    <rect x="24" y="24" width="130" height="42" rx="8" fill="#4f46e5" fill-opacity="0.2" stroke="#6366f1" stroke-width="1" />
+    <text x="44" y="50" fill="#a5b4fc" class="font-mono caption" font-weight="700">FIGMA SPEC</text>
+    
+    <text x="175" y="48" fill="#f8fafc" class="font-sans title-med">EasyLLM • Autonomous AI Model Architect UI</text>
+    <text x="175" y="70" fill="#94a3b8" class="font-sans caption">Next.js 14 • Tailwind CSS • Glassmorphism Dark Mode • Fast-Track 20s Pipeline</text>
+    
+    <!-- Status Badges -->
+    <rect x="1340" y="28" width="140" height="34" rx="17" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-width="1" />
+    <circle cx="1358" cy="45" r="4" fill="#10b981" />
+    <text x="1370" y="50" fill="#34d399" class="font-sans caption" font-weight="600">Gemini LLM Active</text>
+
+    <rect x="1496" y="28" width="160" height="34" rx="17" fill="#0284c7" fill-opacity="0.15" stroke="#38bdf8" stroke-width="1" />
+    <circle cx="1514" cy="45" r="4" fill="#38bdf8" />
+    <text x="1526" y="50" fill="#7dd3fc" class="font-sans caption" font-weight="600">v1.0.0 Production</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 2: APPLICATION NAVBAR              -->
+  <!-- ========================================== -->
+  <g id="Navbar-Component" transform="translate(120, 180)">
+    <rect x="0" y="0" width="1680" height="74" rx="14" fill="#0b1120" fill-opacity="0.85" stroke="#1e293b" stroke-width="1" filter="url(#shadow-card)" />
+    
+    <!-- Logo & Branding -->
+    <g transform="translate(28, 17)">
+      <rect x="0" y="0" width="40" height="40" rx="10" fill="url(#primary-btn-grad)" />
+      <path d="M 12 28 L 20 12 L 28 28 Z M 16 23 L 24 23" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="52" y="27" fill="#ffffff" class="font-sans" font-size="20" font-weight="800" letter-spacing="-0.03em">Easy<tspan fill="#38bdf8">LLM</tspan></text>
+      <text x="134" y="27" fill="#64748b" class="font-sans caption" font-weight="500">Autonomous Architect</text>
+    </g>
+
+    <!-- Step Breadcrumbs -->
+    <g transform="translate(560, 22)">
+      <!-- Step 1 -->
+      <circle cx="15" cy="15" r="14" fill="#4f46e5" />
+      <text x="11" y="20" fill="#ffffff" class="font-sans caption" font-weight="700">1</text>
+      <text x="36" y="19" fill="#f8fafc" class="font-sans body-bold">Input &amp; Ingestion</text>
+
+      <line x1="165" y1="15" x2="225" y2="15" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" />
+
+      <!-- Step 2 -->
+      <circle cx="255" cy="15" r="14" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="251" y="20" fill="#94a3b8" class="font-sans caption" font-weight="700">2</text>
+      <text x="276" y="19" fill="#94a3b8" class="font-sans body-regular">Architecture Decision</text>
+
+      <line x1="430" y1="15" x2="490" y2="15" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" />
+
+      <!-- Step 3 -->
+      <circle cx="520" cy="15" r="14" fill="#1e293b" stroke="#475569" stroke-width="1" />
+      <text x="516" y="20" fill="#94a3b8" class="font-sans caption" font-weight="700">3</text>
+      <text x="541" y="19" fill="#94a3b8" class="font-sans body-regular">Deploy &amp; Evaluate</text>
+    </g>
+
+    <!-- Right Telemetry & Actions -->
+    <g transform="translate(1420, 18)">
+      <rect x="0" y="0" width="105" height="38" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="24" fill="#e2e8f0" class="font-mono caption">RTX 4090</text>
+
+      <rect x="120" y="0" width="115" height="38" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <circle cx="136" cy="19" r="4" fill="#10b981" />
+      <text x="148" y="24" fill="#10b981" class="font-sans caption" font-weight="600">Online</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 3: HERO INTRO & METRIC STATS       -->
+  <!-- ========================================== -->
+  <g id="Hero-Section" transform="translate(120, 285)">
+    <!-- Title & Subtitle -->
+    <text x="0" y="44" fill="#f8fafc" class="font-sans title-large">Autonomous AI Model Architect &amp; Fine-Tuner</text>
+    <text x="0" y="80" fill="#94a3b8" class="font-sans" font-size="16" font-weight="400">
+      Transform natural language requirements &amp; raw documents (PDF, DOCX, CSV, JSONL) into production RAG pipelines or QLoRA models in ~20 seconds.
+    </text>
+
+    <!-- Metric Stat Badges -->
+    <g transform="translate(1200, 0)">
+      <!-- Metric 1 -->
+      <rect x="0" y="0" width="145" height="85" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+      <text x="18" y="32" fill="#38bdf8" class="font-sans title-med">~20s</text>
+      <text x="18" y="60" fill="#64748b" class="font-sans caption">Fast-Track Build</text>
+
+      <!-- Metric 2 -->
+      <rect x="160" y="0" width="145" height="85" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+      <text x="178" y="32" fill="#a855f7" class="font-sans title-med">100%</text>
+      <text x="178" y="60" fill="#64748b" class="font-sans caption">Zero Mock Data</text>
+
+      <!-- Metric 3 -->
+      <rect x="320" y="0" width="160" height="85" rx="12" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+      <text x="338" y="32" fill="#34d399" class="font-sans title-med">&lt;300ms</text>
+      <text x="338" y="60" fill="#64748b" class="font-sans caption">Inference Latency</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 4: STEP 1 - INPUT & DROPZONE       -->
+  <!-- ========================================== -->
+  <g id="Step1-Input-Dropzone-Frame" transform="translate(120, 405)">
+    <!-- Main Left Card: Requirement Prompt Input -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="815" height="420" rx="16" fill="#0b1120" fill-opacity="0.9" stroke="#1e293b" stroke-width="1" filter="url(#shadow-card)" />
+      
+      <!-- Card Header -->
+      <g transform="translate(28, 28)">
+        <rect x="0" y="0" width="32" height="32" rx="8" fill="#4f46e5" fill-opacity="0.2" />
+        <text x="10" y="22" fill="#818cf8" class="font-sans body-bold">A</text>
+        <text x="44" y="22" fill="#f8fafc" class="font-sans title-med">1. Describe Your AI Objective</text>
+        <text x="44" y="44" fill="#64748b" class="font-sans caption">Gemini AI analyzes domain constraints, latency thresholds, and style needs</text>
+      </g>
+
+      <!-- Prompt Textarea Simulation -->
+      <rect x="28" y="90" width="759" height="210" rx="12" fill="#030712" stroke="#334155" stroke-width="1" />
+      <text x="48" y="128" fill="#e2e8f0" class="font-sans body-regular" font-weight="500">I need a specialized customer support assistant that understands our internal refund policies</text>
+      <text x="48" y="152" fill="#e2e8f0" class="font-sans body-regular" font-weight="500">and warranty documentation. It must accurately cite clauses and handle multi-turn customer tickets</text>
+      <text x="48" y="176" fill="#e2e8f0" class="font-sans body-regular" font-weight="500">with strict factual grounding and zero hallucinations.</text>
+
+      <!-- Prompt Quick Presets -->
+      <g transform="translate(28, 320)">
+        <text x="0" y="18" fill="#64748b" class="font-sans caption">Presets:</text>
+        
+        <rect x="60" y="0" width="180" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="76" y="18" fill="#94a3b8" class="font-sans caption">Customer Support QA</text>
+
+        <rect x="250" y="0" width="180" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="266" y="18" fill="#94a3b8" class="font-sans caption">Legal Contract Analysis</text>
+
+        <rect x="440" y="0" width="170" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="456" y="18" fill="#94a3b8" class="font-sans caption">Code &amp; SQL Assistant</text>
+      </g>
+
+      <!-- Action Button: Analyze -->
+      <g transform="translate(605, 360)">
+        <rect x="0" y="0" width="182" height="42" rx="10" fill="url(#primary-btn-grad)" />
+        <text x="32" y="26" fill="#ffffff" class="font-sans body-bold">Run Architecture &rarr;</text>
+      </g>
+    </g>
+
+    <!-- Main Right Card: Multimodal File Dropzone -->
+    <g transform="translate(865, 0)">
+      <rect x="0" y="0" width="815" height="420" rx="16" fill="#0b1120" fill-opacity="0.9" stroke="#1e293b" stroke-width="1" filter="url(#shadow-card)" />
+      
+      <!-- Card Header -->
+      <g transform="translate(28, 28)">
+        <rect x="0" y="0" width="32" height="32" rx="8" fill="#06b6d4" fill-opacity="0.2" />
+        <text x="11" y="22" fill="#22d3ee" class="font-sans body-bold">B</text>
+        <text x="44" y="22" fill="#f8fafc" class="font-sans title-med">2. Ingest Knowledge or Training Data</text>
+        <text x="44" y="44" fill="#64748b" class="font-sans caption">Real data ingestion engine with automatic format &amp; syntax validation</text>
+      </g>
+
+      <!-- Dashed Drop Area -->
+      <rect x="28" y="90" width="759" height="210" rx="12" fill="#070d18" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6 6" />
+      
+      <g transform="translate(360, 120)">
+        <!-- Upload Icon -->
+        <circle cx="50" cy="20" r="28" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+        <path d="M 50 10 L 50 30 M 42 18 L 50 10 L 58 18" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        
+        <text x="-40" y="70" fill="#f8fafc" class="font-sans body-bold">Drag &amp; drop knowledge or dataset files here</text>
+        <text x="-15" y="92" fill="#64748b" class="font-sans caption">Supports DOCX, PDF, CSV, JSONL, TXT (up to 50MB)</text>
+      </g>
+
+      <!-- Supported Badges -->
+      <g transform="translate(28, 318)">
+        <rect x="0" y="0" width="80" height="26" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="14" y="17" fill="#38bdf8" class="font-mono caption">.DOCX</text>
+
+        <rect x="90" y="0" width="70" height="26" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="14" y="17" fill="#f43f5e" class="font-mono caption">.PDF</text>
+
+        <rect x="170" y="0" width="80" height="26" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="14" y="17" fill="#10b981" class="font-mono caption">.JSONL</text>
+
+        <rect x="260" y="0" width="70" height="26" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+        <text x="14" y="17" fill="#fbbf24" class="font-mono caption">.CSV</text>
+      </g>
+
+      <!-- Uploaded File Pill (Active State) -->
+      <g transform="translate(28, 355)">
+        <rect x="0" y="0" width="759" height="48" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+        <circle cx="24" cy="24" r="6" fill="#10b981" />
+        <text x="42" y="29" fill="#f8fafc" class="font-mono caption" font-weight="600">refund_policy_v2.docx</text>
+        <text x="240" y="29" fill="#94a3b8" class="font-sans caption">| 14.8 KB • 12 Structured Sections Extracted</text>
+        
+        <rect x="635" y="10" width="110" height="28" rx="6" fill="#10b981" fill-opacity="0.2" />
+        <text x="648" y="28" fill="#34d399" class="font-sans caption" font-weight="700">Validated 100%</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 5: STEP 2 - DECISION ENGINE        -->
+  <!-- ========================================== -->
+  <g id="Step2-Decision-Engine-Frame" transform="translate(120, 860)">
+    <rect x="0" y="0" width="1680" height="490" rx="16" fill="#0b1120" fill-opacity="0.9" stroke="#1e293b" stroke-width="1" filter="url(#shadow-card)" />
+    
+    <!-- Header -->
+    <g transform="translate(32, 28)">
+      <rect x="0" y="0" width="130" height="30" rx="6" fill="#818cf8" fill-opacity="0.15" stroke="#818cf8" stroke-width="1" />
+      <text x="14" y="20" fill="#a5b4fc" class="font-mono caption" font-weight="700">DECISION ENGINE</text>
+      
+      <text x="145" y="24" fill="#f8fafc" class="font-sans title-med">Recommended Architecture Selection</text>
+      <text x="145" y="46" fill="#64748b" class="font-sans caption">Deterministically verified against hardware budget (CUDA 24GB VRAM) and data modality</text>
+    </g>
+
+    <!-- 3 Approach Cards (RAG Selected vs QLoRA vs Hybrid) -->
+    <g transform="translate(32, 85)">
+      
+      <!-- CARD 1: RAG (RECOMMENDED / ACTIVE) -->
+      <g transform="translate(0, 0)">
+        <!-- Highlighted Active Border -->
+        <rect x="0" y="0" width="510" height="360" rx="14" fill="#071224" stroke="#0284c7" stroke-width="2" />
+        
+        <!-- Active Pill -->
+        <rect x="360" y="16" width="130" height="26" rx="13" fill="#0284c7" />
+        <text x="375" y="33" fill="#ffffff" class="font-sans caption" font-weight="700">RECOMMENDED</text>
+
+        <text x="24" y="44" fill="#38bdf8" class="font-sans title-med">RAG Pipeline</text>
+        <text x="24" y="68" fill="#94a3b8" class="font-sans caption">Retrieval-Augmented Generation</text>
+
+        <!-- Confidence Dial Simulation -->
+        <g transform="translate(24, 90)">
+          <rect x="0" y="0" width="462" height="70" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+          <text x="18" y="28" fill="#64748b" class="font-sans caption">Architect Confidence</text>
+          <text x="18" y="54" fill="#38bdf8" class="font-sans title-med">96.8%</text>
+
+          <!-- Mini Progress bar -->
+          <rect x="140" y="38" width="300" height="10" rx="5" fill="#1e293b" />
+          <rect x="140" y="38" width="290" height="10" rx="5" fill="url(#primary-btn-grad)" />
+        </g>
+
+        <!-- Rationale Specs -->
+        <g transform="translate(24, 180)">
+          <text x="0" y="0" fill="#f8fafc" class="font-sans body-bold">Why RAG was selected:</text>
+          <text x="0" y="24" fill="#94a3b8" class="font-sans caption">• Requirement mandates strict citation &amp; zero hallucination on policy</text>
+          <text x="0" y="44" fill="#94a3b8" class="font-sans caption">• Uploaded dataset contains unstructured DOCX reference text</text>
+          <text x="0" y="64" fill="#94a3b8" class="font-sans caption">• Vector search with all-MiniLM-L6-v2 embeddings produces &lt;45ms recall</text>
+        </g>
+
+        <!-- Base Model Selection -->
+        <g transform="translate(24, 280)">
+          <rect x="0" y="0" width="462" height="52" rx="8" fill="#030712" stroke="#1e293b" stroke-width="1" />
+          <text x="16" y="22" fill="#64748b" class="font-sans caption">Paired Base Model:</text>
+          <text x="16" y="42" fill="#e2e8f0" class="font-mono caption" font-weight="600">HuggingFaceTB/SmolLM2-135M-Instruct</text>
+        </g>
+      </g>
+
+      <!-- CARD 2: QLoRA Fine-Tuning (Alternative) -->
+      <g transform="translate(545, 0)">
+        <rect x="0" y="0" width="510" height="360" rx="14" fill="#090e1a" stroke="#1e293b" stroke-width="1" />
+        
+        <text x="24" y="44" fill="#e2e8f0" class="font-sans title-med">QLoRA Fine-Tuning</text>
+        <text x="24" y="68" fill="#64748b" class="font-sans caption">Parameter-Efficient Fine-Tuning</text>
+
+        <g transform="translate(24, 90)">
+          <rect x="0" y="0" width="462" height="70" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+          <text x="18" y="28" fill="#64748b" class="font-sans caption">Architect Confidence</text>
+          <text x="18" y="54" fill="#94a3b8" class="font-sans title-med">42.0%</text>
+
+          <rect x="140" y="38" width="300" height="10" rx="5" fill="#1e293b" />
+          <rect x="140" y="38" width="126" height="10" rx="5" fill="#475569" />
+        </g>
+
+        <g transform="translate(24, 180)">
+          <text x="0" y="0" fill="#94a3b8" class="font-sans body-bold">Feasibility analysis:</text>
+          <text x="0" y="24" fill="#64748b" class="font-sans caption">• Ideal for tone, conversational persona, or SQL syntax adaptation</text>
+          <text x="0" y="44" fill="#64748b" class="font-sans caption">• Requires formatted prompt-completion pairs (JSONL/CSV)</text>
+          <text x="0" y="64" fill="#64748b" class="font-sans caption">• Currently skipped because raw reference docs are unstructured</text>
+        </g>
+
+        <!-- Action Button: Force Select -->
+        <g transform="translate(24, 280)">
+          <rect x="0" y="0" width="462" height="52" rx="8" fill="#111827" stroke="#334155" stroke-width="1" />
+          <text x="160" y="32" fill="#94a3b8" class="font-sans caption" font-weight="600">Manual Override &rarr;</text>
+        </g>
+      </g>
+
+      <!-- CARD 3: Hybrid RAG + LoRA -->
+      <g transform="translate(1090, 0)">
+        <rect x="0" y="0" width="510" height="360" rx="14" fill="#090e1a" stroke="#1e293b" stroke-width="1" />
+        
+        <text x="24" y="44" fill="#e2e8f0" class="font-sans title-med">Hybrid Engine</text>
+        <text x="24" y="68" fill="#64748b" class="font-sans caption">Dynamic Vector Index + Adapted Weights</text>
+
+        <g transform="translate(24, 90)">
+          <rect x="0" y="0" width="462" height="70" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+          <text x="18" y="28" fill="#64748b" class="font-sans caption">Architect Confidence</text>
+          <text x="18" y="54" fill="#a855f7" class="font-sans title-med">78.5%</text>
+
+          <rect x="140" y="38" width="300" height="10" rx="5" fill="#1e293b" />
+          <rect x="140" y="38" width="235" height="10" rx="5" fill="#a855f7" />
+        </g>
+
+        <g transform="translate(24, 180)">
+          <text x="0" y="0" fill="#94a3b8" class="font-sans body-bold">Feasibility analysis:</text>
+          <text x="0" y="24" fill="#64748b" class="font-sans caption">• Combines external doc retrieval with fine-tuned conversational style</text>
+          <text x="0" y="44" fill="#64748b" class="font-sans caption">• Recommended when both FAQ documents and dialog logs are uploaded</text>
+          <text x="0" y="64" fill="#64748b" class="font-sans caption">• Hardware: 1.8GB VRAM allocated</text>
+        </g>
+
+        <!-- Action Button: Select Hybrid -->
+        <g transform="translate(24, 280)">
+          <rect x="0" y="0" width="462" height="52" rx="8" fill="#111827" stroke="#334155" stroke-width="1" />
+          <text x="160" y="32" fill="#94a3b8" class="font-sans caption" font-weight="600">Select Hybrid &rarr;</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 6: STEP 3 - 20s PIPELINE MONITOR   -->
+  <!-- ========================================== -->
+  <g id="Step3-Pipeline-Monitor-Frame" transform="translate(120, 1380)">
+    <rect x="0" y="0" width="1680" height="460" rx="16" fill="#0b1120" fill-opacity="0.9" stroke="#1e293b" stroke-width="1" filter="url(#shadow-card)" />
+
+    <!-- Header & 20s Ring -->
+    <g transform="translate(32, 28)">
+      <rect x="0" y="0" width="130" height="30" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-width="1" />
+      <text x="14" y="20" fill="#34d399" class="font-mono caption" font-weight="700">BUILD PIPELINE</text>
+      
+      <text x="145" y="24" fill="#f8fafc" class="font-sans title-med">Fast-Track Build Pipeline • Real Execution Monitor</text>
+      <text x="145" y="46" fill="#64748b" class="font-sans caption">Autonomous compilation, chunking, vector indexing &amp; model deployment</text>
+
+      <!-- Timer Pill -->
+      <rect x="1460" y="0" width="150" height="42" rx="21" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-width="1" />
+      <circle cx="1480" cy="21" r="5" fill="#10b981" />
+      <text x="1495" y="26" fill="#34d399" class="font-mono caption" font-weight="700">18.4s ELAPSED</text>
+    </g>
+
+    <!-- Progress Pipeline Steps (Horizontal Timeline) -->
+    <g transform="translate(32, 95)">
+      <!-- Step 1: Ingest -->
+      <rect x="0" y="0" width="310" height="60" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+      <circle cx="28" cy="30" r="12" fill="#10b981" />
+      <path d="M 23 30 L 27 34 L 34 26" stroke="#ffffff" stroke-width="2" fill="none" />
+      <text x="50" y="28" fill="#f8fafc" class="font-sans body-bold">1. Document Parsing</text>
+      <text x="50" y="46" fill="#10b981" class="font-sans caption">Completed • 12 chunks</text>
+
+      <!-- Step 2: Embeddings -->
+      <rect x="330" y="0" width="310" height="60" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+      <circle cx="358" cy="30" r="12" fill="#10b981" />
+      <path d="M 353 30 L 357 34 L 364 26" stroke="#ffffff" stroke-width="2" fill="none" />
+      <text x="380" y="28" fill="#f8fafc" class="font-sans body-bold">2. Vector Embeddings</text>
+      <text x="380" y="46" fill="#10b981" class="font-sans caption">Completed • 384-dim</text>
+
+      <!-- Step 3: Index Build -->
+      <rect x="660" y="0" width="310" height="60" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+      <circle cx="688" cy="30" r="12" fill="#10b981" />
+      <path d="M 683 30 L 687 34 L 694 26" stroke="#ffffff" stroke-width="2" fill="none" />
+      <text x="710" y="28" fill="#f8fafc" class="font-sans body-bold">3. Vector DB Store</text>
+      <text x="710" y="46" fill="#10b981" class="font-sans caption">Indexed &amp; Persisted</text>
+
+      <!-- Step 4: Quantization / Weights -->
+      <rect x="990" y="0" width="310" height="60" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1" />
+      <circle cx="1018" cy="30" r="12" fill="#10b981" />
+      <path d="M 1013 30 L 1017 34 L 1024 26" stroke="#ffffff" stroke-width="2" fill="none" />
+      <text x="1040" y="28" fill="#f8fafc" class="font-sans body-bold">4. Quantization Load</text>
+      <text x="1040" y="46" fill="#10b981" class="font-sans caption">SmolLM2-135M Ready</text>
+
+      <!-- Step 5: Verification -->
+      <rect x="1320" y="0" width="295" height="60" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+      <circle cx="1348" cy="30" r="12" fill="#0284c7" />
+      <path d="M 1343 30 L 1347 34 L 1354 26" stroke="#ffffff" stroke-width="2" fill="none" />
+      <text x="1370" y="28" fill="#f8fafc" class="font-sans body-bold">5. Deployment</text>
+      <text x="1370" y="46" fill="#38bdf8" class="font-sans caption">Live on Port 8000</text>
+    </g>
+
+    <!-- Terminal Output Log Console -->
+    <g transform="translate(32, 175)">
+      <rect x="0" y="0" width="1615" height="255" rx="12" fill="#030712" stroke="#1e293b" stroke-width="1" />
+      
+      <!-- Terminal Header Bar -->
+      <rect x="0" y="0" width="1615" height="38" rx="12" fill="#0b1120" />
+      <circle cx="20" cy="19" r="5" fill="#ef4444" />
+      <circle cx="38" cy="19" r="5" fill="#f59e0b" />
+      <circle cx="56" cy="19" r="5" fill="#10b981" />
+      <text x="80" y="24" fill="#64748b" class="font-mono caption">easyllm-runtime-worker.log • PID: 18420</text>
+
+      <!-- Log Lines -->
+      <g transform="translate(24, 65)">
+        <text x="0" y="0" fill="#10b981" class="font-mono caption">[22:04:36 INFO]</text>
+        <text x="140" y="0" fill="#e2e8f0" class="font-mono caption">Initializing Ingestion Pipeline with DocxExtractor...</text>
+        
+        <text x="0" y="26" fill="#10b981" class="font-mono caption">[22:04:38 INFO]</text>
+        <text x="140" y="26" fill="#e2e8f0" class="font-mono caption">Parsed 12 markdown paragraphs from refund_policy_v2.docx (14,832 bytes)</text>
+
+        <text x="0" y="52" fill="#38bdf8" class="font-mono caption">[22:04:42 INFO]</text>
+        <text x="140" y="52" fill="#e2e8f0" class="font-mono caption">Generating dense embeddings via sentence-transformers/all-MiniLM-L6-v2...</text>
+
+        <text x="0" y="78" fill="#38bdf8" class="font-mono caption">[22:04:46 INFO]</text>
+        <text x="140" y="78" fill="#e2e8f0" class="font-mono caption">Building vector index in vector_db/storage_index.json [Dim: 384, Distance: Cosine]</text>
+
+        <text x="0" y="104" fill="#a855f7" class="font-mono caption">[22:04:50 INFO]</text>
+        <text x="140" y="104" fill="#e2e8f0" class="font-mono caption">Loaded base model SmolLM2-135M-Instruct into memory. Total pipeline time: 18.4s</text>
+
+        <text x="0" y="130" fill="#10b981" class="font-mono caption">[22:04:54 SUCCESS]</text>
+        <text x="140" y="130" fill="#34d399" class="font-mono caption">Pipeline build completed in 18.4s. System state: READY_FOR_INFERENCE</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- SECTION 7: STEP 4 - TESTING PLAYGROUND     -->
+  <!-- ========================================== -->
+  <g id="Step4-Interactive-Playground-Frame" transform="translate(120, 1870)">
+    <rect x="0" y="0" width="1680" height="710" rx="16" fill="#0b1120" fill-opacity="0.9" stroke="#1e293b" stroke-width="1" filter="url(#shadow-card)" />
+
+    <!-- Header -->
+    <g transform="translate(32, 28)">
+      <rect x="0" y="0" width="140" height="30" rx="6" fill="#38bdf8" fill-opacity="0.15" stroke="#38bdf8" stroke-width="1" />
+      <text x="14" y="20" fill="#38bdf8" class="font-mono caption" font-weight="700">INFERENCE LAB</text>
+      
+      <text x="155" y="24" fill="#f8fafc" class="font-sans title-med">Live Interactive Testing Playground &amp; Evaluation</text>
+      <text x="155" y="46" fill="#64748b" class="font-sans caption">Real-time inference with exact document chunk citations and latency telemetry</text>
+    </g>
+
+    <!-- Split Screen: Left Chat Window, Right Citations & Eval Metrics -->
+    <g transform="translate(32, 85)">
+      <!-- Left: Chat Interface (Width 960px) -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="960" height="585" rx="14" fill="#070c18" stroke="#1e293b" stroke-width="1" />
+        
+        <!-- Chat Header -->
+        <rect x="0" y="0" width="960" height="48" rx="14" fill="#0f172a" />
+        <circle cx="24" cy="24" r="5" fill="#10b981" />
+        <text x="38" y="29" fill="#f8fafc" class="font-sans body-bold">Active RAG Engine</text>
+        <text x="175" y="29" fill="#64748b" class="font-mono caption">SmolLM2-135M + refund_policy_v2.docx</text>
+
+        <!-- Message 1: User Query -->
+        <g transform="translate(24, 75)">
+          <rect x="360" y="0" width="550" height="55" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+          <text x="380" y="32" fill="#f8fafc" class="font-sans body-regular">What is the return window for defective electronic items?</text>
+        </g>
+
+        <!-- Message 2: Model Response with Source Citations -->
+        <g transform="translate(24, 150)">
+          <!-- Bot Avatar -->
+          <rect x="0" y="0" width="36" height="36" rx="8" fill="url(#primary-btn-grad)" />
+          <text x="11" y="24" fill="#ffffff" class="font-sans caption" font-weight="800">AI</text>
+
+          <!-- Bot Bubble -->
+          <rect x="48" y="0" width="860" height="150" rx="12" fill="#0f1d36" stroke="#0284c7" stroke-width="1" />
+          <text x="70" y="34" fill="#f8fafc" class="font-sans body-regular" font-weight="500">Based on Section 4.2 of the Refund Policy:</text>
+          <text x="70" y="62" fill="#e2e8f0" class="font-sans body-regular">
+            Defective electronic items are eligible for a 100% full refund or free replacement within <tspan font-weight="700" fill="#38bdf8">30 days</tspan> of receipt.
+          </text>
+          <text x="70" y="90" fill="#e2e8f0" class="font-sans body-regular">
+            Items must be returned with their original packaging, accessories, and invoice slip.
+          </text>
+
+          <!-- Inline Citation Pill -->
+          <g transform="translate(70, 108)">
+            <rect x="0" y="0" width="220" height="26" rx="13" fill="#0284c7" fill-opacity="0.25" stroke="#38bdf8" stroke-width="1" />
+            <text x="14" y="17" fill="#7dd3fc" class="font-mono caption" font-weight="600">Source: refund_policy_v2.docx #4.2</text>
+          </g>
+        </g>
+
+        <!-- Chat Input Bar -->
+        <g transform="translate(24, 510)">
+          <rect x="0" y="0" width="910" height="52" rx="12" fill="#030712" stroke="#334155" stroke-width="1" />
+          <text x="24" y="32" fill="#64748b" class="font-sans body-regular">Ask a question about your uploaded documents or test model behavior...</text>
+          
+          <rect x="800" y="8" width="95" height="36" rx="8" fill="url(#primary-btn-grad)" />
+          <text x="826" y="30" fill="#ffffff" class="font-sans body-bold">Send</text>
+        </g>
+      </g>
+
+      <!-- Right: Evaluation Metrics & Citations Inspection (Width 625px) -->
+      <g transform="translate(990, 0)">
+        <rect x="0" y="0" width="625" height="585" rx="14" fill="#070c18" stroke="#1e293b" stroke-width="1" />
+        
+        <!-- Header -->
+        <rect x="0" y="0" width="625" height="48" rx="14" fill="#0f172a" />
+        <text x="24" y="29" fill="#f8fafc" class="font-sans body-bold">Quality &amp; Grounding Telemetry</text>
+
+        <!-- Metrics Grid -->
+        <g transform="translate(24, 70)">
+          <!-- Metric 1 -->
+          <rect x="0" y="0" width="180" height="85" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+          <text x="18" y="28" fill="#64748b" class="font-sans caption">Latency</text>
+          <text x="18" y="56" fill="#10b981" class="font-sans title-med">118 ms</text>
+
+          <!-- Metric 2 -->
+          <rect x="195" y="0" width="180" height="85" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+          <text x="18" y="28" fill="#64748b" class="font-sans caption">Faithfulness</text>
+          <text x="18" y="56" fill="#38bdf8" class="font-sans title-med">0.982</text>
+
+          <!-- Metric 3 -->
+          <rect x="390" y="0" width="185" height="85" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1" />
+          <text x="18" y="28" fill="#64748b" class="font-sans caption">Context Precision</text>
+          <text x="18" y="56" fill="#a855f7" class="font-sans title-med">99.1%</text>
+        </g>
+
+        <!-- Retrieved Chunks Inspector -->
+        <g transform="translate(24, 180)">
+          <text x="0" y="0" fill="#f8fafc" class="font-sans body-bold">Retrieved Grounding Chunks (Top-2):</text>
+          
+          <!-- Chunk 1 -->
+          <g transform="translate(0, 15)">
+            <rect x="0" y="0" width="575" height="150" rx="10" fill="#0b1120" stroke="#0284c7" stroke-width="1" />
+            <rect x="14" y="14" width="110" height="22" rx="4" fill="#0284c7" fill-opacity="0.2" />
+            <text x="24" y="30" fill="#38bdf8" class="font-mono caption">Chunk #4 • Score 0.94</text>
+            <text x="14" y="60" fill="#e2e8f0" class="font-sans caption" font-weight="500">
+              "Section 4.2: Defective electronic hardware may be returned within 30 days of shipment delivery for a full refund or direct exchange without restocking penalties."
+            </text>
+          </g>
+
+          <!-- Chunk 2 -->
+          <g transform="translate(0, 180)">
+            <rect x="0" y="0" width="575" height="145" rx="10" fill="#0b1120" stroke="#1e293b" stroke-width="1" />
+            <rect x="14" y="14" width="110" height="22" rx="4" fill="#64748b" fill-opacity="0.2" />
+            <text x="24" y="30" fill="#94a3b8" class="font-mono caption">Chunk #5 • Score 0.81</text>
+            <text x="14" y="60" fill="#94a3b8" class="font-sans caption">
+              "Section 4.3: Accessories, power adapters, and protective cases must accompany the primary unit inside original packaging."
+            </text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

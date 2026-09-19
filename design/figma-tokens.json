@@ -1,0 +1,128 @@
+{
+  "version": "1.0.0",
+  "name": "EasyLLM Design System",
+  "description": "Figma Design Tokens and Component Schema for EasyLLM Autonomous AI Architect",
+  "color": {
+    "background": {
+      "canvas": { "value": "#030712", "type": "color", "description": "Primary Dark Void Canvas" },
+      "surface": { "value": "#0b1120", "type": "color", "description": "Card Surface Background" },
+      "surfaceSubtle": { "value": "#0f172a", "type": "color", "description": "Secondary Surface" },
+      "input": { "value": "#030712", "type": "color", "description": "Input Box Background" },
+      "elevated": { "value": "#1e293b", "type": "color", "description": "Elevated Tooltips & Overlays" }
+    },
+    "brand": {
+      "indigo": { "value": "#6366f1", "type": "color" },
+      "indigoDark": { "value": "#4f46e5", "type": "color" },
+      "cyan": { "value": "#06b6d4", "type": "color" },
+      "cyanLight": { "value": "#38bdf8", "type": "color" },
+      "emerald": { "value": "#10b981", "type": "color" },
+      "emeraldLight": { "value": "#34d399", "type": "color" },
+      "purple": { "value": "#a855f7", "type": "color" },
+      "rose": { "value": "#f43f5e", "type": "color" },
+      "amber": { "value": "#fbbf24", "type": "color" }
+    },
+    "border": {
+      "subtle": { "value": "#1e293b", "type": "color" },
+      "active": { "value": "#0284c7", "type": "color" },
+      "glow": { "value": "rgba(56, 189, 248, 0.4)", "type": "color" },
+      "success": { "value": "#10b981", "type": "color" }
+    },
+    "text": {
+      "primary": { "value": "#f8fafc", "type": "color" },
+      "secondary": { "value": "#94a3b8", "type": "color" },
+      "muted": { "value": "#64748b", "type": "color" },
+      "accent": { "value": "#38bdf8", "type": "color" },
+      "success": { "value": "#34d399", "type": "color" }
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "sans": { "value": "Inter, system-ui, -apple-system, sans-serif", "type": "fontFamilies" },
+      "mono": { "value": "SF Mono, JetBrains Mono, Fira Code, monospace", "type": "fontFamilies" }
+    },
+    "fontSizes": {
+      "xs": { "value": "12px", "type": "fontSizes" },
+      "sm": { "value": "14px", "type": "fontSizes" },
+      "base": { "value": "16px", "type": "fontSizes" },
+      "lg": { "value": "18px", "type": "fontSizes" },
+      "xl": { "value": "22px", "type": "fontSizes" },
+      "2xl": { "value": "28px", "type": "fontSizes" },
+      "3xl": { "value": "38px", "type": "fontSizes" }
+    },
+    "fontWeights": {
+      "regular": { "value": "400", "type": "fontWeights" },
+      "medium": { "value": "500", "type": "fontWeights" },
+      "semibold": { "value": "600", "type": "fontWeights" },
+      "bold": { "value": "700", "type": "fontWeights" },
+      "extrabold": { "value": "800", "type": "fontWeights" }
+    }
+  },
+  "radii": {
+    "sm": { "value": "6px", "type": "borderRadius" },
+    "md": { "value": "8px", "type": "borderRadius" },
+    "lg": { "value": "12px", "type": "borderRadius" },
+    "xl": { "value": "16px", "type": "borderRadius" },
+    "full": { "value": "9999px", "type": "borderRadius" }
+  },
+  "spacing": {
+    "xs": { "value": "4px", "type": "spacing" },
+    "sm": { "value": "8px", "type": "spacing" },
+    "md": { "value": "16px", "type": "spacing" },
+    "lg": { "value": "24px", "type": "spacing" },
+    "xl": { "value": "32px", "type": "spacing" },
+    "2xl": { "value": "48px", "type": "spacing" }
+  },
+  "shadows": {
+    "card": {
+      "value": {
+        "x": "0",
+        "y": "12px",
+        "blur": "24px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.6)",
+        "type": "dropShadow"
+      }
+    },
+    "glowIndigo": {
+      "value": {
+        "x": "0",
+        "y": "0",
+        "blur": "32px",
+        "spread": "4px",
+        "color": "rgba(99, 102, 241, 0.25)",
+        "type": "dropShadow"
+      }
+    }
+  },
+  "components": {
+    "navbar": {
+      "height": "74px",
+      "borderRadius": "14px",
+      "background": "#0b1120",
+      "opacity": "0.85"
+    },
+    "decisionCard": {
+      "width": "510px",
+      "minHeight": "360px",
+      "borderRadius": "14px",
+      "borderWidth": "2px",
+      "activeBorder": "#0284c7"
+    },
+    "dropzone": {
+      "borderStyle": "dashed",
+      "borderWidth": "1.5px",
+      "borderColor": "#38bdf8",
+      "supportedFormats": ["DOCX", "PDF", "CSV", "JSONL", "TXT"]
+    },
+    "terminalConsole": {
+      "background": "#030712",
+      "font": "monospace",
+      "headerDots": ["#ef4444", "#fbbf24", "#10b981"]
+    },
+    "playgroundChat": {
+      "botBubbleBackground": "#0f1d36",
+      "botBubbleBorder": "#0284c7",
+      "userBubbleBackground": "#1e293b"
+    }
+  }
+}
