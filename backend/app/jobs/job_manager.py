@@ -178,15 +178,16 @@ class JobManager:
 
                 registered = RegisteredModel(
                     id=model_id,
-                    name=f"RAG Knowledge Assistant ({doc_name})",
+                    name=f"RAG Knowledge Assistant ({doc_name})" if dataset_path else f"AI Assistant ({config.requirement[:30]}...)",
                     base_model=config.base_model_id,
                     architecture="rag",
                     status="READY",
                     vector_db_path=str(vector_store.save_dir),
-                    dataset_name=doc_name,
+                    dataset_name=doc_name if dataset_path else "Direct Instructions (No Document)",
                     training_time_seconds=3.5,
                     evaluation=evaluation,
                     evaluation_report=report,
+                    training_config={"requirement": config.requirement, **config.model_dump()},
                     created_at=datetime.utcnow().isoformat()
                 )
                 with self._lock:

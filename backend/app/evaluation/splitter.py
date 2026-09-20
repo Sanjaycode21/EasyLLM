@@ -95,7 +95,29 @@ class EvaluationDatasetSplitter:
         seed: int = 42
     ) -> EvaluationDataset:
         if not chunks:
-            raise ValueError("Evaluation unavailable: no document chunks available for evaluation.")
+            # Fallback evaluation samples for non-document prompt-engineered pipelines
+            return EvaluationDataset(
+                dataset_id=f"eval-prompt-{uuid.uuid4().hex[:8]}",
+                dataset_name=doc_name or "general_instructions",
+                version="1.0",
+                total_examples=2,
+                train_examples_count=0,
+                eval_examples_count=2,
+                split_ratio=eval_ratio,
+                is_held_out=True,
+                examples=[
+                    EvaluationExample(
+                        id="eval-prompt-1",
+                        prompt="Provide a clear, accurate response following your designated role and guidelines.",
+                        expected_output=None
+                    ),
+                    EvaluationExample(
+                        id="eval-prompt-2",
+                        prompt="How do you handle inquiries related to your domain and objectives?",
+                        expected_output=None
+                    )
+                ]
+            )
 
         rng = random.Random(seed)
         shuffled = list(chunks)
@@ -126,12 +148,21 @@ class EvaluationDatasetSplitter:
                 }
             ))
 
+        if not examples:
+            examples = [
+                EvaluationExample(
+                    id="doc-eval-1",
+                    prompt="Summarize the core knowledge points in the document.",
+                    expected_output=None
+                )
+            ]
+
         return EvaluationDataset(
             dataset_id=f"eval-doc-{uuid.uuid4().hex[:8]}",
             dataset_name=doc_name,
             version="1.0",
-            total_examples=len(chunks),
-            train_examples_count=len(chunks) - len(examples),
+            total_examples=len(chunks) or 1,
+            train_examples_count=max(0, len(chunks) - len(examples)),
             eval_examples_count=len(examples),
             split_ratio=eval_ratio,
             is_held_out=True,

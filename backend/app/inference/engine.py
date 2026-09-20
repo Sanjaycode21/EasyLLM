@@ -57,32 +57,45 @@ class InferenceEngine:
         adapter_path_str = model_info.get("adapter_path")
         sources_used: List[RetrievedSource] = []
 
-        # 1. Handle RAG or Hybrid Knowledge Retrieval
+        # 1. Extract Model Requirement & Instructions
+        requirement = ""
+        if model_info.get("training_config") and isinstance(model_info["training_config"], dict):
+            requirement = model_info["training_config"].get("requirement", "")
+
+        # 2. Handle RAG or Hybrid Knowledge Retrieval
         context_text = ""
         if architecture in ["rag", "hybrid"]:
             vector_store = VectorStore.load(model_id)
             if len(vector_store.chunks) > 0:
                 retrieval_results = vector_store.search(message, top_k=3)
                 for chunk, score in retrieval_results:
-                    meta = chunk.get("metadata", {})
-                    sources_used.append(RetrievedSource(
-                        document_name=meta.get("document_name", "knowledge_base"),
-                        page=meta.get("page"),
-                        chunk_index=meta.get("chunk_index", 0),
-                        snippet=chunk.get("text", "")[:250] + "...",
-                        relevance_score=round(score, 3)
-                    ))
-                context_text = "\n\n".join([f"[Source: {c.get('metadata', {}).get('document_name', '')}]\n{c.get('text', '')}" for c, _ in retrieval_results])
+                    if score > 0.05: # Only include relevant chunks
+                        meta = chunk.get("metadata", {})
+                        sources_used.append(RetrievedSource(
+                            document_name=meta.get("document_name", "knowledge_base"),
+                            page=meta.get("page"),
+                            chunk_index=meta.get("chunk_index", 0),
+                            snippet=chunk.get("text", "")[:250] + "...",
+                            relevance_score=round(score, 3)
+                        ))
+                if sources_used:
+                    context_text = "\n\n".join([f"[Source: {c.get('metadata', {}).get('document_name', 'Document')}]\n{c.get('text', '')}" for c, _ in retrieval_results if _ > 0.05])
 
-        # 2. Construct Prompt
-        system_prompt = (
-            "You are a helpful, professional AI assistant built by EasyLLM."
-        )
+        # 3. Construct System Prompt
+        if requirement:
+            system_prompt = f"You are a specialized AI assistant. Your role and instruction guidelines:\n{requirement}"
+        else:
+            system_prompt = "You are a helpful, professional, and knowledgeable AI assistant."
+
         if context_text:
             system_prompt += (
                 f"\n\nUse the following verified reference context to accurately answer the user question:\n"
                 f"--- REFERENCE CONTEXT ---\n{context_text}\n--- END CONTEXT ---\n"
-                f"Base your answer strictly on the facts provided in the reference context."
+                f"Base your answer strictly on the facts provided in the reference context and reference specific sections where appropriate."
+            )
+        else:
+            system_prompt += (
+                "\nAnswer the user's question directly, clearly, and helpfully using your general knowledge and domain capabilities."
             )
 
         # 3. Model Generation (Try local PEFT model first if adapter exists)

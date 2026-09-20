@@ -107,10 +107,10 @@ export function FileDropzone() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
         <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
           <Database className="h-3.5 w-3.5 text-blue-600" />
-          What should your AI know? (Multimodal Input)
+          Knowledge Documents & Data (Optional)
         </label>
         <span className="text-[11px] font-medium text-slate-400">
-          Documents · Images · Audio · Text
+          Optional · Build from prompt alone or upload docs
         </span>
       </div>
 
@@ -131,9 +131,12 @@ export function FileDropzone() {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-800">
-                {isDragActive ? "Drop media or document to inspect" : "Upload or drop multimodal data"}
+                {isDragActive ? "Drop media or document to inspect" : "Add domain reference documents (Optional)"}
               </p>
-              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Upload files to give your AI specific reference material, or leave empty to build from prompt instructions alone.
+              </p>
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/60 shadow-2xs">
                   <FileText className="h-2.5 w-2.5" />
                   PDF / DOCX
