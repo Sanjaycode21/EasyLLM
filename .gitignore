@@ -50,6 +50,9 @@ datasets/*
 vector_db/*
 !vector_db/.gitkeep
 scratch/
+scratch_eval/
+storage/*
+!storage/.gitkeep
 
 # OS
 .DS_Store

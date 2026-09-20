@@ -26,7 +26,7 @@ class Settings(BaseModel):
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
-    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
     ollama_base_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     hf_token: str = os.getenv("HF_TOKEN", "")
     
@@ -38,7 +38,7 @@ class Settings(BaseModel):
     vector_db_dir: Path = VECTOR_DB_DIR
     
     # Default Base Model for QLoRA
-    default_base_model: str = os.getenv("DEFAULT_BASE_MODEL", "HuggingFaceTB/SmolLM2-135M-Instruct")
+    default_base_model: str = os.getenv("DEFAULT_BASE_MODEL", "Qwen/Qwen3-4B-Instruct-2507")
     
     # Embeddings model
     embedding_model_name: str = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")

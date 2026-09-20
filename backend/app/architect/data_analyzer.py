@@ -136,7 +136,7 @@ class DataAnalyzer:
             )
 
         # 5. Plain Text TXT Analysis
-        elif extension == "txt":
+        elif extension in ["txt", "md"]:
             with open(file_path, "r", encoding="utf-8", errors="replace") as f:
                 content = f.read()
             lines = [line.strip() for line in content.split("\n") if line.strip()]
@@ -145,6 +145,7 @@ class DataAnalyzer:
             return DatasetMetadata(
                 filename=filename,
                 file_type="txt",
+                modality="text",
                 file_size_bytes=file_size,
                 num_records=len(lines),
                 num_valid_examples=len(lines),
@@ -156,11 +157,46 @@ class DataAnalyzer:
                 validation_errors=[]
             )
 
+        # 6. Multimodal Images (png, jpg, jpeg, webp)
+        elif extension in ["png", "jpg", "jpeg", "webp"]:
+            return DatasetMetadata(
+                filename=filename,
+                file_type=extension,
+                modality="image",
+                file_size_bytes=file_size,
+                num_records=1,
+                num_valid_examples=1,
+                num_invalid_examples=0,
+                format="multimodal_image",
+                sample_preview=[{"image": filename, "type": f"image/{extension}", "size_kb": round(file_size / 1024, 1)}],
+                training_compatible=False,
+                knowledge_density=0.85,
+                validation_errors=[]
+            )
+
+        # 7. Multimodal Audio (mp3, wav, m4a)
+        elif extension in ["mp3", "wav", "m4a"]:
+            return DatasetMetadata(
+                filename=filename,
+                file_type=extension,
+                modality="audio",
+                file_size_bytes=file_size,
+                num_records=1,
+                num_valid_examples=1,
+                num_invalid_examples=0,
+                format="multimodal_audio",
+                sample_preview=[{"audio": filename, "type": f"audio/{extension}", "size_kb": round(file_size / 1024, 1)}],
+                training_compatible=False,
+                knowledge_density=0.75,
+                validation_errors=[]
+            )
+
         # Unknown format
         else:
             return DatasetMetadata(
                 filename=filename,
                 file_type="unknown",
+                modality="unknown",
                 file_size_bytes=file_size,
                 num_records=0,
                 num_valid_examples=0,
@@ -169,5 +205,5 @@ class DataAnalyzer:
                 sample_preview=None,
                 training_compatible=False,
                 knowledge_density=0.0,
-                validation_errors=[f"Unsupported file format '.{extension}'. Supported: .pdf, .docx, .doc, .jsonl, .csv, .txt"]
+                validation_errors=[f"Unsupported file format '.{extension}'. Supported: Text (.txt, .jsonl, .csv), Documents (.pdf, .docx), Images (.png, .jpg, .webp), Audio (.wav, .mp3, .m4a)."]
             )

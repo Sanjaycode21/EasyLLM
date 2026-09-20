@@ -1,19 +1,23 @@
 from typing import List, Optional, Dict, Any, Literal
 from pydantic import BaseModel, Field
+from app.multimodal.schemas import PipelineTraceStep, MultimodalProcessingResult, MultimodalBatchResult
 
 # Dataset Metadata Schemas
 class DatasetMetadata(BaseModel):
     filename: str
-    file_type: Literal["pdf", "docx", "doc", "txt", "json", "jsonl", "csv", "unknown"]
-    file_size_bytes: int
-    num_records: int
+    file_type: str = "txt"
+    modality: Optional[Literal["text", "document", "image", "audio", "unknown"]] = "text"
+    file_size_bytes: int = 0
+    num_records: int = 0
     num_valid_examples: int = 0
     num_invalid_examples: int = 0
-    format: str = "raw_text" # "chat_messages", "prompt_response", "document_text", "tabular"
+    format: str = "raw_text" # "chat_messages", "prompt_response", "document_text", "tabular", "multimodal_image", "multimodal_audio"
     sample_preview: Optional[List[Any]] = None
     training_compatible: bool = False
     knowledge_density: float = 0.0 # 0 to 1 score indicating if document is informational
     validation_errors: List[str] = []
+    normalized_content: Optional[str] = None
+    pipeline_trace: List[PipelineTraceStep] = []
 
 # Requirement Analysis Schema
 class ArchitectureAnalysis(BaseModel):
@@ -23,27 +27,37 @@ class ArchitectureAnalysis(BaseModel):
     recommended_strategy: Literal["rag", "qlora", "hybrid"]
     reason: str
     confidence: float = 0.95
-    suggested_base_model: str = "HuggingFaceTB/SmolLM2-135M-Instruct"
+    suggested_base_model: str = "Qwen/Qwen3-4B-Instruct-2507"
     data_compatible: bool = True
     validation_notes: List[str] = []
+    modalities_detected: List[str] = []
+    pipeline_trace: List[PipelineTraceStep] = []
 
 # Hardware Status Schema
 class HardwareStatus(BaseModel):
-    cuda_available: bool
-    device_name: str
-    device_count: int = 0
+    gpu_name: str
+    physical_gpu_name: str = "N/A"
     total_vram_gb: float = 0.0
     free_vram_gb: float = 0.0
+    cuda_available: bool = False
+    pytorch_cuda: bool = False
+    pytorch_version: str = "N/A"
+    driver_version: Optional[str] = None
     cpu_cores: int = 1
     system_ram_gb: float = 0.0
-    recommended_quantization: str = "4bit" # "4bit", "8bit", "fp16", "cpu_fp32"
+    free_ram_gb: float = 0.0
+    libraries: Dict[str, str] = {}
+    target_model: str = "Qwen/Qwen3-4B-Instruct-2507"
+    can_fit_qwen3_4b_local: bool = False
+    recommended_mode: str = "colab_recommended"
+    recommended_mode_text: str = ""
 
 # Build Configuration
 class BuildConfiguration(BaseModel):
     requirement: str
     dataset_id: Optional[str] = None
     strategy: Literal["rag", "qlora", "hybrid"]
-    base_model_id: str = "HuggingFaceTB/SmolLM2-135M-Instruct"
+    base_model_id: str = "Qwen/Qwen3-4B-Instruct-2507"
     lora_rank: int = 8
     lora_alpha: int = 16
     learning_rate: float = 2e-4
@@ -53,6 +67,7 @@ class BuildConfiguration(BaseModel):
     max_seq_length: int = 512
     chunk_size: int = 500
     chunk_overlap: int = 50
+    force_compute_provider: Optional[Literal["auto", "local", "colab"]] = "auto"
 
 # Build Status & Log Event
 class BuildLogEvent(BaseModel):
@@ -91,6 +106,11 @@ class BuildJobStatus(BaseModel):
     logs: List[BuildLogEvent] = []
     error_message: Optional[str] = None
     model_id: Optional[str] = None
+    colab_notebook_url: Optional[str] = None
+    colab_filename: Optional[str] = None
+    compute_provider: Optional[str] = None
+
+from app.evaluation.schemas import EvaluationReport
 
 # Evaluation Schema
 class EvaluationMetric(BaseModel):
@@ -116,6 +136,13 @@ class ModelEvaluation(BaseModel):
     metrics: List[EvaluationMetric]
     sample_comparisons: List[EvaluationSample]
 
+# Evaluation Run Request
+class EvaluationRunRequest(BaseModel):
+    pipeline_id: str
+    dataset_id: Optional[str] = None
+    split_ratio: float = 0.2
+    seed: int = 42
+
 # Registered Model Schema
 class RegisteredModel(BaseModel):
     id: str
@@ -128,8 +155,10 @@ class RegisteredModel(BaseModel):
     dataset_name: Optional[str] = None
     training_time_seconds: Optional[float] = None
     evaluation: Optional[ModelEvaluation] = None
+    evaluation_report: Optional[EvaluationReport] = None
     training_config: Optional[Dict[str, Any]] = None
     created_at: str
+
 
 # Chat Request & Response
 class ChatRequest(BaseModel):

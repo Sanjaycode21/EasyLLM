@@ -65,6 +65,25 @@ export function Navbar() {
             >
               Model Registry
             </Link>
+            <Link
+              href="/models"
+              className={`flex items-center gap-1.5 transition hover:text-slate-900 ${
+                pathname.startsWith("/evaluation") ? "text-blue-700 font-bold" : ""
+              }`}
+            >
+              <span>Evaluation Engine</span>
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                Live
+              </span>
+            </Link>
+            <Link
+              href="/diagnostics"
+              className={`transition hover:text-slate-900 ${
+                pathname === "/diagnostics" ? "text-slate-900 font-semibold" : ""
+              }`}
+            >
+              Diagnostics
+            </Link>
             <a
               href="http://localhost:8000/docs"
               target="_blank"

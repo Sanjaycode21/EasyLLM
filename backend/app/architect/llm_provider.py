@@ -24,8 +24,39 @@ class RuleBasedLocalProvider(LLMProvider):
     Evaluates semantic keywords, linguistic patterns, and dataset intent with strict schema validation.
     """
     async def generate_text(self, prompt: str) -> str:
+        # Check if reference context is provided in the prompt
+        if "--- REFERENCE CONTEXT ---" in prompt and "--- END CONTEXT ---" in prompt:
+            try:
+                context_part = prompt.split("--- REFERENCE CONTEXT ---")[1].split("--- END CONTEXT ---")[0].strip()
+                question_part = prompt.split("User Question:")[-1].strip() if "User Question:" in prompt else prompt
+                
+                # Split context into paragraphs/sentences
+                paragraphs = [p.strip() for p in context_part.split("\n\n") if p.strip()]
+                q_words = set(re.findall(r'\w+', question_part.lower())) - {"what", "is", "the", "how", "do", "i", "a", "an", "to", "for", "in", "can", "my", "our"}
+                
+                best_match = ""
+                best_score = 0
+                for p in paragraphs:
+                    p_lower = p.lower()
+                    score = sum(1 for w in q_words if w in p_lower)
+                    if score > best_score:
+                        best_score = score
+                        best_match = p
+                
+                if best_match:
+                    # Clean source prefix if present
+                    clean_match = re.sub(r'\[Source:.*?\]', '', best_match).strip()
+                    return f"Based on the verified reference documentation:\n\n{clean_match}"
+                elif paragraphs:
+                    clean_first = re.sub(r'\[Source:.*?\]', '', paragraphs[0]).strip()
+                    return f"According to the available reference documents:\n\n{clean_first}"
+            except Exception:
+                pass
+
         p_lower = prompt.lower()
-        if "policy" in p_lower or "manual" in p_lower or "guideline" in p_lower:
+        if "track" in p_lower or "order" in p_lower:
+            return "To track your order, enter your order number on our tracking portal or follow the real-time tracking link sent to your confirmation email."
+        elif "policy" in p_lower or "manual" in p_lower or "guideline" in p_lower:
             return "Based on company policy and official documentation, all procedures adhere strictly to our SLA and 30-day money-back guarantee terms."
         return "Thank you for reaching out. Our support team is happy to assist you in resolving your inquiry promptly."
 
@@ -151,25 +182,29 @@ class OpenAIProvider(LLMProvider):
             return await self._fallback.generate_structured(prompt, schema_cls)
 
 class GeminiProvider(LLMProvider):
-    def __init__(self, api_key: str, model: str = "gemini-1.5-flash"):
+    def __init__(self, api_key: str, model: str = "gemini-3.6-flash"):
         self.api_key = api_key
         self.model = model
-        self.base_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        self.models_to_try = [model, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-2.5-flash"]
         self._fallback = RuleBasedLocalProvider()
 
     async def generate_text(self, prompt: str) -> str:
         payload = {
             "contents": [{"parts": [{"text": prompt}]}]
         }
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                res = await client.post(self.base_url, json=payload)
-                res.raise_for_status()
-                data = res.json()
-                return data["candidates"][0]["content"]["parts"][0]["text"]
-        except Exception as e:
-            print(f"[GeminiProvider] API request failed ({e}). Falling back to local analyzer.")
-            return await self._fallback.generate_text(prompt)
+        for m in self.models_to_try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={self.api_key}"
+            try:
+                async with httpx.AsyncClient(timeout=20.0) as client:
+                    res = await client.post(url, json=payload)
+                    if res.status_code == 200:
+                        data = res.json()
+                        return data["candidates"][0]["content"]["parts"][0]["text"]
+            except Exception as e:
+                continue
+
+        print("[GeminiProvider] All model attempts failed. Falling back to local analyzer.")
+        return await self._fallback.generate_text(prompt)
 
     async def generate_structured(self, prompt: str, schema_cls: Type[T]) -> T:
         schema_dict = schema_cls.model_json_schema()
@@ -187,17 +222,21 @@ class GeminiProvider(LLMProvider):
                 "temperature": 0.1
             }
         }
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                res = await client.post(self.base_url, json=payload)
-                res.raise_for_status()
-                data = res.json()
-                raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
-                parsed_json = json.loads(raw_text)
-                return schema_cls.model_validate(parsed_json)
-        except Exception as e:
-            print(f"[GeminiProvider] API structured request failed ({e}). Falling back to local analyzer.")
-            return await self._fallback.generate_structured(prompt, schema_cls)
+        for m in self.models_to_try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={self.api_key}"
+            try:
+                async with httpx.AsyncClient(timeout=20.0) as client:
+                    res = await client.post(url, json=payload)
+                    if res.status_code == 200:
+                        data = res.json()
+                        raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                        parsed_json = json.loads(raw_text)
+                        return schema_cls.model_validate(parsed_json)
+            except Exception as e:
+                continue
+
+        print("[GeminiProvider] Structured request failed across models. Falling back to local analyzer.")
+        return await self._fallback.generate_structured(prompt, schema_cls)
 
 class OllamaProvider(LLMProvider):
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3:latest"):

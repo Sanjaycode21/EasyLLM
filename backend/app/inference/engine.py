@@ -89,11 +89,23 @@ class InferenceEngine:
         generated_text = ""
         used_local_weights = False
         
+        chat_history_str = ""
+        history_text = ""
+        if history:
+            for turn in history:
+                role = turn.get("role", "user")
+                content = turn.get("content", "")
+                chat_history_str += f"<|im_start|>{role}\n{content}<|im_end|>\n"
+                if role == "user":
+                    history_text += f"\nUser: {content}"
+                else:
+                    history_text += f"\nAssistant: {content}"
+
         if adapter_path_str and Path(adapter_path_str).exists():
             peft_model, tokenizer = cls.load_peft_model_and_tokenizer(Path(adapter_path_str), base_model_id)
             if peft_model and tokenizer:
                 try:
-                    prompt_formatted = f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{message}<|im_end|>\n<|im_start|>assistant\n"
+                    prompt_formatted = f"<|im_start|>system\n{system_prompt}<|im_end|>\n{chat_history_str}<|im_start|>user\n{message}<|im_end|>\n<|im_start|>assistant\n"
                     inputs = tokenizer(prompt_formatted, return_tensors="pt")
                     with torch.no_grad():
                         outputs = peft_model.generate(
@@ -113,7 +125,7 @@ class InferenceEngine:
         if not generated_text:
             # Generate using LLMProvider with grounded context
             provider = get_llm_provider()
-            full_prompt = f"{system_prompt}\n\nUser Question: {message}"
+            full_prompt = f"{system_prompt}\n{history_text}\n\nUser Question: {message}"
             generated_text = await provider.generate_text(full_prompt)
 
         latency_ms = round((time.time() - start_time) * 1000, 1)

@@ -7,8 +7,10 @@ import {
   BuildJobStatus,
   RegisteredModel,
   ModelEvaluation,
+  EvaluationReport,
   ChatResponse,
 } from "./types";
+
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -109,6 +111,16 @@ export class APIProvider implements AIPlatformProvider {
     }
     return res.json();
   }
+
+  async getEvaluationReport(modelIdOrEvalId: string): Promise<EvaluationReport> {
+    const res = await fetch(`${this.baseUrl}/api/evaluation/report/${modelIdOrEvalId}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || "Evaluation report not found");
+    }
+    return res.json();
+  }
+
 
   async sendMessage(
     modelId: string,

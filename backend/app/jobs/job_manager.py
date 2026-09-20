@@ -14,6 +14,10 @@ from app.rag.chunker import DocumentChunker
 from app.rag.vector_store import VectorStore
 from app.training.qlora_trainer import RealTrainer
 from app.evaluation.evaluator import SystemEvaluator
+from app.evaluation.splitter import EvaluationDatasetSplitter
+from app.evaluation.engine import EvaluationEngine
+from app.evaluation.manager import evaluation_manager
+
 
 class JobManager:
     """
@@ -128,24 +132,46 @@ class JobManager:
                 elif dataset_path and dataset_path.suffix.lower() in [".docx", ".doc"]:
                     text = DOCXExtractor.extract_text(dataset_path)
                     chunks = DocumentChunker.chunk_text(text, chunk_size=config.chunk_size, chunk_overlap=config.chunk_overlap, metadata={"document_name": doc_name})
+                elif dataset_path and dataset_path.suffix.lower() in [".png", ".jpg", ".jpeg", ".webp", ".mp3", ".wav", ".m4a"]:
+                    from app.multimodal.pipeline import MultimodalPipeline
+                    mm_res = asyncio.run(MultimodalPipeline.process_file(dataset_path))
+                    text = mm_res.normalized_content or f"Multimodal asset {doc_name}"
+                    chunks = DocumentChunker.chunk_text(text, chunk_size=config.chunk_size, chunk_overlap=config.chunk_overlap, metadata={"document_name": doc_name, "modality": mm_res.modality})
                 elif dataset_path:
                     with open(dataset_path, "r", encoding="utf-8", errors="replace") as f:
                         text = f.read()
                     chunks = DocumentChunker.chunk_text(text, chunk_size=config.chunk_size, chunk_overlap=config.chunk_overlap, metadata={"document_name": doc_name})
 
-                self.update_job_log(job_id, "PROGRESS", f"Generated {len(chunks)} contextual chunks from document.", 40.0)
+                # Create deterministic held-out evaluation set from chunks
+                eval_dataset = EvaluationDatasetSplitter.create_document_eval_set(chunks, doc_name=doc_name)
+                # Ensure training index receives only training chunks if available
+                train_chunks = chunks if len(chunks) <= 2 else [c for c in chunks if not any(ex.metadata.get("chunk_index") == c.get("metadata", {}).get("chunk_index") for ex in eval_dataset.examples)]
+                if not train_chunks:
+                    train_chunks = chunks
+
+                self.update_job_log(job_id, "PROGRESS", f"Generated {len(chunks)} chunks ({len(train_chunks)} indexed, {len(eval_dataset.examples)} held-out for eval).", 40.0)
                 
                 self.update_status(job_id, "TRAINING") # Vector indexing step
                 self.update_job_log(job_id, "INFO", f"Embedding chunks with dense neural model and indexing in VectorStore...", 60.0)
                 
                 vector_store = VectorStore(model_id)
-                vector_store.add_documents(chunks)
+                vector_store.add_documents(train_chunks)
                 
                 self.update_status(job_id, "EVALUATING")
-                self.update_job_log(job_id, "INFO", "Running evaluation against knowledge retrieval queries...", 80.0)
+                self.update_job_log(job_id, "INFO", f"Running comparative evaluation on {len(eval_dataset.examples)} held-out evaluation queries...", 80.0)
                 
-                val_records = [{"messages": [{"role": "user", "content": f"Query from {doc_name}"}, {"role": "assistant", "content": chunks[0]["text"][:200] if chunks else ""}]}]
-                evaluation = asyncio.run(SystemEvaluator.evaluate_model(model_id, val_records, config.requirement))
+                pipeline_info = {
+                    "id": model_id,
+                    "architecture": "rag",
+                    "base_model": config.base_model_id,
+                    "training_config": config.model_dump()
+                }
+                report = asyncio.run(EvaluationEngine.evaluate_pipeline(pipeline_info, eval_dataset))
+                evaluation_manager._save_report(report)
+                
+                # Create legacy evaluation object
+                val_records = [{"messages": [{"role": "user", "content": ex.prompt}, {"role": "assistant", "content": ex.expected_output or ""}]} for ex in eval_dataset.examples]
+                evaluation = asyncio.run(SystemEvaluator.evaluate_model(model_id, val_records, config.requirement, architecture="rag", base_model_id=config.base_model_id))
                 
                 self.update_status(job_id, "SAVING")
                 self.update_job_log(job_id, "INFO", "Persisting vector database index and registering model...", 95.0)
@@ -160,6 +186,7 @@ class JobManager:
                     dataset_name=doc_name,
                     training_time_seconds=3.5,
                     evaluation=evaluation,
+                    evaluation_report=report,
                     created_at=datetime.utcnow().isoformat()
                 )
                 with self._lock:
@@ -188,7 +215,12 @@ class JobManager:
                         {"messages": [{"role": "user", "content": "Can I cancel my subscription?"}, {"role": "assistant", "content": "Yes, subscriptions can be cancelled anytime through your account settings dashboard."}]}
                     ]
 
-                train_data, val_data = DatasetProcessor.split_train_val(records)
+                train_data, eval_dataset = EvaluationDatasetSplitter.split_records(
+                    records,
+                    dataset_name=dataset_path.name if dataset_path else "chat_dataset.jsonl",
+                    eval_ratio=0.2,
+                    seed=42
+                )
                 
                 def log_cb(level: str, msg: str, prog: Optional[float], loss: Optional[float], st: Optional[int], tot: Optional[int]):
                     self.update_job_log(job_id, level, msg, prog, loss, st, tot)
@@ -200,19 +232,31 @@ class JobManager:
                 train_result = RealTrainer.train_lora(
                     config=config,
                     train_records=train_data,
-                    val_records=val_data,
+                    val_records=[{"messages": [{"role": "user", "content": ex.prompt}, {"role": "assistant", "content": ex.expected_output or ""}]} for ex in eval_dataset.examples],
                     output_dir=output_model_dir,
                     log_callback=log_cb
                 )
 
                 self.update_status(job_id, "EVALUATING")
-                self.update_job_log(job_id, "INFO", "Evaluating fine-tuned adapter against base model baseline...", 93.0)
+                self.update_job_log(job_id, "INFO", f"Evaluating fine-tuned adapter against base model on {len(eval_dataset.examples)} held-out samples...", 93.0)
                 
+                pipeline_info = {
+                    "id": model_id,
+                    "architecture": "qlora",
+                    "base_model": config.base_model_id,
+                    "adapter_path": str(output_model_dir),
+                    "training_config": config.model_dump()
+                }
+                report = asyncio.run(EvaluationEngine.evaluate_pipeline(pipeline_info, eval_dataset))
+                evaluation_manager._save_report(report)
+
                 evaluation = asyncio.run(SystemEvaluator.evaluate_model(
                     model_id=model_id,
-                    val_records=val_data,
+                    val_records=[{"messages": [{"role": "user", "content": ex.prompt}, {"role": "assistant", "content": ex.expected_output or ""}]} for ex in eval_dataset.examples],
                     requirement=config.requirement,
-                    adapter_path=str(output_model_dir)
+                    adapter_path=str(output_model_dir),
+                    architecture="qlora",
+                    base_model_id=config.base_model_id
                 ))
 
                 self.update_status(job_id, "SAVING")
@@ -226,6 +270,7 @@ class JobManager:
                     dataset_name=dataset_path.name if dataset_path else "chat_dataset.jsonl",
                     training_time_seconds=train_result["duration_seconds"],
                     evaluation=evaluation,
+                    evaluation_report=report,
                     training_config=config.model_dump(),
                     created_at=datetime.utcnow().isoformat()
                 )
@@ -250,7 +295,6 @@ class JobManager:
                 if dataset_path and dataset_path.suffix.lower() == ".pdf":
                     pages = PDFExtractor.extract_text_with_pages(dataset_path)
                     chunks = DocumentChunker.chunk_pages(pages, chunk_size=config.chunk_size, chunk_overlap=config.chunk_overlap, doc_name=doc_name)
-                    # Create conversational examples from document sections
                     records = [{"messages": [{"role": "user", "content": f"Explain section from {doc_name}"}, {"role": "assistant", "content": c["text"][:250]}]} for c in chunks[:5]]
                 elif dataset_path and dataset_path.suffix.lower() in [".docx", ".doc"]:
                     text = DOCXExtractor.extract_text(dataset_path)
@@ -265,7 +309,12 @@ class JobManager:
                     ]
                     chunks = [{"chunk_id": 0, "text": "Company support policy document and procedures.", "metadata": {"document_name": doc_name, "chunk_index": 0}}]
 
-                train_data, val_data = DatasetProcessor.split_train_val(records)
+                train_data, eval_dataset = EvaluationDatasetSplitter.split_records(
+                    records,
+                    dataset_name=doc_name,
+                    eval_ratio=0.2,
+                    seed=42
+                )
 
                 # Index RAG
                 self.update_status(job_id, "TRAINING")
@@ -283,17 +332,29 @@ class JobManager:
                 train_result = RealTrainer.train_lora(
                     config=config,
                     train_records=train_data,
-                    val_records=val_data,
+                    val_records=[{"messages": [{"role": "user", "content": ex.prompt}, {"role": "assistant", "content": ex.expected_output or ""}]} for ex in eval_dataset.examples],
                     output_dir=output_model_dir,
                     log_callback=log_cb
                 )
 
                 self.update_status(job_id, "EVALUATING")
+                pipeline_info = {
+                    "id": model_id,
+                    "architecture": "hybrid",
+                    "base_model": config.base_model_id,
+                    "adapter_path": str(output_model_dir),
+                    "training_config": config.model_dump()
+                }
+                report = asyncio.run(EvaluationEngine.evaluate_pipeline(pipeline_info, eval_dataset))
+                evaluation_manager._save_report(report)
+
                 evaluation = asyncio.run(SystemEvaluator.evaluate_model(
                     model_id=model_id,
-                    val_records=val_data,
+                    val_records=[{"messages": [{"role": "user", "content": ex.prompt}, {"role": "assistant", "content": ex.expected_output or ""}]} for ex in eval_dataset.examples],
                     requirement=config.requirement,
-                    adapter_path=str(output_model_dir)
+                    adapter_path=str(output_model_dir),
+                    architecture="hybrid",
+                    base_model_id=config.base_model_id
                 ))
 
                 self.update_status(job_id, "SAVING")
@@ -308,6 +369,7 @@ class JobManager:
                     dataset_name=doc_name,
                     training_time_seconds=train_result["duration_seconds"] + 2.0,
                     evaluation=evaluation,
+                    evaluation_report=report,
                     training_config=config.model_dump(),
                     created_at=datetime.utcnow().isoformat()
                 )

@@ -7,8 +7,10 @@ import {
   BuildJobStatus,
   RegisteredModel,
   ModelEvaluation,
+  EvaluationReport,
   ChatResponse,
 } from "./types";
+
 
 export class LocalProvider implements AIPlatformProvider {
   async getHardware(): Promise<HardwareStatus> {
@@ -153,6 +155,91 @@ export class LocalProvider implements AIPlatformProvider {
       sample_comparisons: [],
     };
   }
+
+  async getEvaluationReport(modelIdOrEvalId: string): Promise<EvaluationReport> {
+    return {
+      evaluation_id: "eval-local-sample",
+      pipeline_id: modelIdOrEvalId,
+      pipeline_type: "rag",
+      base_model: "Qwen/Qwen3-4B-Instruct-2507",
+      dataset_name: "company_manual.pdf",
+      dataset_version: "1.0",
+      num_examples: 5,
+      baseline: {
+        pipeline_id: "base-qwen3-4b",
+        pipeline_type: "rag",
+        base_model: "Qwen/Qwen3-4B-Instruct-2507",
+        pipeline_version: "1.0-unassisted",
+      },
+      customized: {
+        pipeline_id: modelIdOrEvalId,
+        pipeline_type: "rag",
+        base_model: "Qwen/Qwen3-4B-Instruct-2507",
+        pipeline_version: "1.0-customized",
+      },
+      overall_baseline_score: 52.4,
+      overall_customized_score: 91.8,
+      overall_absolute_change_pp: 39.4,
+      overall_relative_change_pct: 75.2,
+      overall_status: "IMPROVED",
+      metrics: [
+        {
+          name: "Semantic Similarity",
+          baseline_score: 55.0,
+          customized_score: 94.0,
+          absolute_change_pp: 39.0,
+          relative_change_pct: 70.9,
+          status: "improved",
+          description: "Dense cosine similarity with ground truth validation answers.",
+          evaluator_method: "deterministic",
+        },
+        {
+          name: "Context Groundedness & Faithfulness",
+          baseline_score: 48.0,
+          customized_score: 96.0,
+          absolute_change_pp: 48.0,
+          relative_change_pct: 100.0,
+          status: "improved",
+          description: "Absence of hallucinations and compliance with source facts.",
+          evaluator_method: "llm_judge",
+        },
+        {
+          name: "Instruction & Persona Adherence",
+          baseline_score: 54.0,
+          customized_score: 90.0,
+          absolute_change_pp: 36.0,
+          relative_change_pct: 66.7,
+          status: "improved",
+          description: "Degree of compliance with specified role constraints.",
+          evaluator_method: "llm_judge",
+        },
+      ],
+      sample_comparisons: [
+        {
+          sample_id: "sample-1",
+          prompt: "What is the return policy for defective items?",
+          expected_output: "All physical hardware items can be returned within 30 days.",
+          baseline_output: "Return policies vary depending on the retailer and conditions.",
+          customized_output: "According to the official policy, all physical hardware items are protected by a 30-day money-back return policy.",
+          baseline_score: 45.0,
+          customized_score: 98.0,
+          score_delta: 53.0,
+          evaluator_notes: "Groundedness and factual correctness significantly improved with retrieved context.",
+        },
+      ],
+      system_performance: {
+        baseline_latency_ms: 180.0,
+        customized_latency_ms: 220.0,
+        latency_delta_ms: 40.0,
+        retrieval_latency_ms: 35.0,
+        generation_latency_ms: 185.0,
+      },
+      conclusion: "Customization delivered a validated overall gain of +39.4 pp (+75.2% relative improvement) across 5 held-out evaluation samples.",
+      evaluator_model: "MiniLM + Gemini-3.6-Flash / Rule Judge",
+      evaluated_at: new Date().toISOString(),
+    };
+  }
+
 
   async sendMessage(
     modelId: string,

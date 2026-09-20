@@ -1,7 +1,23 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, BookOpen, Clock, FileText } from "lucide-react";
+import Link from "next/link";
+import {
+  Send,
+  Bot,
+  User,
+  BookOpen,
+  Clock,
+  FileText,
+  Mic,
+  MicOff,
+  Paperclip,
+  Image as ImageIcon,
+  X,
+  Volume2,
+  Sparkles,
+  Loader2
+} from "lucide-react";
 import { getProvider } from "@/lib/providers";
 import { useAppStore } from "@/lib/store";
 import { ChatResponse, RetrievedSource } from "@/lib/providers/types";
@@ -17,6 +33,7 @@ interface MessageItem {
   architecture?: "rag" | "qlora" | "hybrid";
   latencyMs?: number;
   timestamp: string;
+  attachedFile?: { name: string; type: string };
 }
 
 export function ChatPlayground({ modelId }: { modelId: string }) {
@@ -25,31 +42,116 @@ export function ChatPlayground({ modelId }: { modelId: string }) {
     {
       id: "intro",
       role: "assistant",
-      content: `Hello! I am your tailored AI system (${modelId}). Ask me anything related to your configured knowledge and guidelines!`,
+      content: `Hello! I am your tailored AI system (${modelId}). You can ask me questions via text, voice speech, or attach images and documents!`,
       timestamp: new Date().toLocaleTimeString(),
     },
   ]);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  const [isProcessingMedia, setIsProcessingMedia] = useState(false);
   const [selectedSource, setSelectedSource] = useState<RetrievedSource | null>(null);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isSending]);
 
+  // Initialize Speech Recognition if supported
+  useEffect(() => {
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRec) {
+      const recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
+
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join("");
+        setInput(transcript);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.warn("Speech recognition notice:", event.error);
+        setIsRecording(false);
+        if (event.error === "not-allowed") {
+          toast.error("Microphone access was denied. Please allow mic permissions in your browser.");
+        }
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, []);
+
+  const toggleVoiceRecording = () => {
+    if (!recognitionRef.current) {
+      toast.error("Voice speech recognition is not supported in this browser. Please use Chrome or Edge.");
+      return;
+    }
+
+    if (isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsRecording(true);
+        toast.info("Listening... Speak your question now.");
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setAttachedFile(file);
+      toast.success(`Attached ${file.name} to message`);
+    }
+  };
+
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!input.trim() || isSending) return;
+    if ((!input.trim() && !attachedFile) || isSending) return;
 
-    const userText = input.trim();
+    let userText = input.trim();
+    const currentAttachment = attachedFile;
+    
     setInput("");
+    setAttachedFile(null);
+
+    // If attachment exists, inspect/process it
+    if (currentAttachment) {
+      setIsProcessingMedia(true);
+      try {
+        const provider = getProvider(useLocalProvider);
+        const meta = await provider.uploadDataset(currentAttachment);
+        const mediaContext = meta.normalized_content || `[Attached ${meta.modality?.toUpperCase() || 'FILE'}: ${currentAttachment.name}]`;
+        userText = userText ? `${userText}\n\n[Referencing Attached ${currentAttachment.name}]:\n${mediaContext}` : `Explain and answer questions regarding attached ${currentAttachment.name}:\n${mediaContext}`;
+      } catch (err: any) {
+        toast.warning(`Note: Uploaded ${currentAttachment.name} with standard reference.`);
+      } finally {
+        setIsProcessingMedia(false);
+      }
+    }
 
     const userMsg: MessageItem = {
       id: `usr-${Date.now()}`,
       role: "user",
       content: userText,
       timestamp: new Date().toLocaleTimeString(),
+      attachedFile: currentAttachment ? { name: currentAttachment.name, type: currentAttachment.type } : undefined
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -90,6 +192,18 @@ export function ChatPlayground({ modelId }: { modelId: string }) {
     }
   };
 
+  const speakText = (text: string) => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+      toast.info("Speaking response...");
+    } else {
+      toast.error("Text-to-speech is not supported in this browser.");
+    }
+  };
+
   return (
     <div className="flex h-[calc(100vh-8.5rem)] flex-col lg:flex-row gap-4">
       {/* Main Chat Stream */}
@@ -107,10 +221,19 @@ export function ChatPlayground({ modelId }: { modelId: string }) {
               </h3>
             </div>
           </div>
-          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-            <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
-            Model Ready
-          </span>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/evaluation/${modelId}`}
+              className="flex items-center gap-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-full border border-purple-200 transition shadow-2xs"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+              <span>Benchmark Scores</span>
+            </Link>
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
+              Multimodal Chat Ready
+            </span>
+          </div>
         </div>
 
         {/* Message Thread */}
@@ -133,6 +256,14 @@ export function ChatPlayground({ modelId }: { modelId: string }) {
                     : "border border-slate-200 bg-slate-50/70 text-slate-800 shadow-2xs"
                 }`}
               >
+                {/* Attached media tag */}
+                {m.attachedFile && (
+                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-lg bg-white/20 px-2.5 py-1 text-[11px] font-semibold">
+                    <FileText className="h-3 w-3" />
+                    <span>Attached: {m.attachedFile.name}</span>
+                  </div>
+                )}
+
                 <div className="prose max-w-none text-xs sm:text-sm">
                   <ReactMarkdown>{m.content}</ReactMarkdown>
                 </div>
@@ -162,15 +293,26 @@ export function ChatPlayground({ modelId }: { modelId: string }) {
                   </div>
                 )}
 
-                {/* Latency & Metadata footer */}
+                {/* Latency & TTS audio button */}
                 <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
                   <span>{m.timestamp}</span>
-                  {m.latencyMs && (
-                    <span className="flex items-center gap-1 font-mono text-slate-500">
-                      <Clock className="h-2.5 w-2.5" />
-                      {m.latencyMs}ms
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {m.role === "assistant" && m.id !== "intro" && (
+                      <button
+                        onClick={() => speakText(m.content)}
+                        className="text-slate-400 hover:text-blue-600 transition p-1"
+                        title="Listen to response (TTS)"
+                      >
+                        <Volume2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    {m.latencyMs && (
+                      <span className="flex items-center gap-1 font-mono text-slate-500">
+                        <Clock className="h-2.5 w-2.5" />
+                        {m.latencyMs}ms
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -201,23 +343,86 @@ export function ChatPlayground({ modelId }: { modelId: string }) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Bar */}
-        <form onSubmit={handleSend} className="border-t border-slate-200 p-4 bg-slate-50/50 flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your question or support query..."
-            className="flex-1 rounded-full border border-slate-200 bg-white px-5 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 shadow-2xs"
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || isSending}
-            className="flex items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 disabled:opacity-40 transition"
-          >
-            <Send className="h-4 w-4" />
-          </button>
-        </form>
+        {/* Input Bar with Voice and Attachment buttons */}
+        <div className="border-t border-slate-200 p-4 bg-slate-50/50 space-y-2">
+          {/* Attachment Preview Badge */}
+          {attachedFile && (
+            <div className="flex items-center justify-between rounded-lg bg-blue-50 border border-blue-200 px-3 py-1.5 text-xs text-blue-900">
+              <div className="flex items-center gap-2">
+                <FileText className="h-3.5 w-3.5 text-blue-600" />
+                <span className="font-semibold truncate max-w-xs">{attachedFile.name}</span>
+                <span className="text-[10px] text-blue-600">({Math.round(attachedFile.size / 1024)} KB)</span>
+              </div>
+              <button
+                onClick={() => setAttachedFile(null)}
+                className="text-blue-500 hover:text-blue-800 p-0.5"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+
+          <form onSubmit={handleSend} className="flex items-center gap-2">
+            {/* Hidden file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              accept=".png,.jpg,.jpeg,.webp,.pdf,.docx,.txt,.csv,.jsonl,.mp3,.wav"
+              className="hidden"
+            />
+
+            {/* Paperclip Attachment Button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-blue-600 transition shadow-2xs"
+              title="Attach Document, Image, or Audio"
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+
+            {/* Microphone Voice Input Button */}
+            <button
+              type="button"
+              onClick={toggleVoiceRecording}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition shadow-2xs ${
+                isRecording
+                  ? "bg-rose-600 border-rose-600 text-white animate-pulse"
+                  : "bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-blue-600"
+              }`}
+              title={isRecording ? "Stop listening" : "Click to speak with voice input"}
+            >
+              {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </button>
+
+            {/* Text Input */}
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={
+                isRecording
+                  ? "Listening to your voice..."
+                  : attachedFile
+                  ? `Ask a question about ${attachedFile.name}...`
+                  : "Type your question, click mic to speak, or attach media..."
+              }
+              className={`flex-1 rounded-full border bg-white px-5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 shadow-2xs ${
+                isRecording ? "border-rose-400 ring-2 ring-rose-300" : "border-slate-200 focus:border-blue-500"
+              }`}
+            />
+
+            {/* Send Button */}
+            <button
+              type="submit"
+              disabled={(!input.trim() && !attachedFile) || isSending}
+              className="flex items-center justify-center rounded-full bg-blue-600 px-5 py-2.5 text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 disabled:opacity-40 transition"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Side Source Inspector Panel */}
