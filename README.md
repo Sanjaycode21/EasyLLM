@@ -6,60 +6,24 @@ Zero simulated progress, zero mock data, zero hardcoded percentages, and zero fa
 
 ---
 
-## 🏗️ Comprehensive Pipeline Architecture
+## 🚀 Pipeline Architecture
 
 ```mermaid
 graph TD
-    User["User Natural Language Requirement + Multimodal Dataset"] --> MMDetector["Multimodal Ingestion & Modality Detector"]
+    User["Requirement Prompt + Multimodal Data (Text / Docs / Audio / Images)"] --> Architect["AI Pipeline Architect"]
+    Architect --> Analysis["Requirement Analyzer & Modality Router"]
     
-    subgraph Ingestion ["1. Multimodal Data Ingestion"]
-        MMDetector -->|"Text / CSV / JSONL"| PreText["Text Normalizer & Chat Formatter"]
-        MMDetector -->|"PDF / DOCX / MD"| PreDoc["PyMuPDF Document Chunker"]
-        MMDetector -->|"Images (PNG/JPG/WEBP)"| PreImg["Vision / OCR Text Extractor"]
-        MMDetector -->|"Audio (WAV/MP3/M4A/Voice)"| PreAud["Audio Transcription & Speech Engine"]
-    end
-
-    PreText --> Splitter["Deterministic 80/20 Dataset Splitter (seed=42)"]
-    PreDoc --> Splitter
-    PreImg --> Splitter
-    PreAud --> Splitter
-
-    Splitter -->|"80% Training Set"| ArchEngine["AI Architect Decision Engine"]
-    Splitter -->|"20% Held-Out Eval Set"| EvalHoldout["Held-Out Evaluation Set (Zero Leakage)"]
-
-    subgraph ArchitecturePaths ["2. Autonomous Model Customization"]
-        ArchEngine -->|"Knowledge Retrieval Need"| PathA["Path A: RAG (Dense Embeddings + VectorStore)"]
-        ArchEngine -->|"Tone / Persona / Task Style"| PathB["Path B: QLoRA (4-Bit PEFT + SFT Trainer)"]
-        ArchEngine -->|"Knowledge + Tone Adaptation"| PathC["Path C: Hybrid (LoRA Adapter + Vector Retrieval)"]
-    end
-
-    PathA --> JobEngine["Stateful Job Engine & Live Hardware Telemetry"]
+    Analysis -->|"Knowledge Retrieval"| PathA["Path A: RAG (Dense Embeddings + VectorStore)"]
+    Analysis -->|"Tone / Behavioral Style"| PathB["Path B: QLoRA (4-Bit PEFT + SFT Trainer)"]
+    Analysis -->|"Knowledge + Tone"| PathC["Path C: Hybrid (LoRA Adapter + RAG Retrieval)"]
+    
+    PathA --> JobEngine["Stateful Job Engine & Hardware Diagnostics"]
     PathB --> JobEngine
     PathC --> JobEngine
-
-    JobEngine --> RealEvalEngine["3. Real Evaluation Engine (Zero Fake Scores)"]
-    EvalHoldout --> RealEvalEngine
-
-    subgraph EvaluationMetrics ["Empirical Evaluation Suite"]
-        RealEvalEngine --> M1["Semantic Similarity (all-MiniLM-L6-v2)"]
-        RealEvalEngine --> M2["Exact Match & Token Overlap F1"]
-        RealEvalEngine --> M3["Rule Adherence & Constraint Verifier"]
-        RealEvalEngine --> M4["Blinded LLM-as-a-Judge (Double-Blind A/B)"]
-    end
-
-    RealEvalEngine --> Verdict{"Empirical Verdict"}
-    Verdict -->|"Custom > Base"| Improved["CUSTOMIZATION IMPROVED (+X pp / +Y%)"]
-    Verdict -->|"Custom <= Base"| Regressed["REGRESSION DETECTED (Alert Flagged)"]
-
-    Improved --> Registry["Model Registry & Artifact Store"]
-    Regressed --> Registry
-
-    subgraph Serving ["4. Deployment & Multimodal Playground"]
-        Registry --> ChatUI["Multimodal Inference Playground"]
-        ChatUI --> VoiceIO["Voice Speech Input & Audio TTS Playback"]
-        ChatUI --> Grounding["Grounded Document Citations & Page Attribution"]
-        ChatUI --> BenchmarkCard["Live Benchmark Scores & Sample Inspector"]
-    end
+    
+    JobEngine --> Evaluator["Real Evaluation Engine (80/20 Holdout Split · Zero Fake Scores)"]
+    Evaluator --> Registry["Model Registry & Benchmark Reports"]
+    Registry --> Playground["Multimodal Playground (Voice I/O · Citations · Audio TTS)"]
 ```
 
 ---
