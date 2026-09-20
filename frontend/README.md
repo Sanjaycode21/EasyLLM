@@ -30,6 +30,13 @@ graph TD
     Evaluator --> Registry["Model Registry & Benchmark Reports"]
     Registry --> Playground["Multimodal Playground (Voice I/O · Citations · Audio TTS)"]
 ```
+## 🌟 Architecture Improvements
+
+- 🔹 **Multimodal Pipeline**: Text, documents, images and audio are routed through modality-specific processing into a unified representation.
+- 🔹 **Hardware-Aware AI Architect**: Pipeline decisions consider user requirements, dataset characteristics and available compute.
+- 🔹 **Modular Pipeline Strategies**: RAG, QLoRA and Hybrid are treated as configurable pipeline architectures rather than isolated models.
+- 🔹 **Benchmark-Driven Evaluation**: Baseline and customized pipelines are evaluated on held-out data to measure actual improvement.
+- 🔹 **Optimization Loop**: Evaluation results can drive pipeline reconfiguration and subsequent re-evaluation.
 
 ## 🌟 Key Features
 
